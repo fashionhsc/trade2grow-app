@@ -24,6 +24,21 @@ export const firebaseLoginPhone = createAsyncThunk('/auth/firebaseLoginPhone',
     }
 );
 
+export const firebaseRegisterPhone = createAsyncThunk('/auth/firebaseRegisterPhone',
+    async (user, { rejectWithValue }) => {
+        try {
+            const response = await axios.post(`${API_URL}/auth/firebaseRegisterPhone`, user, {
+                withCredentials: true,
+            });
+            return response.data;
+        } catch (err) {
+            return rejectWithValue(
+                err.response?.data || { message: err.message }
+            );
+        }
+    }
+);
+
 export const checkAuth = createAsyncThunk('/auth/check-auth',
     async (_, { rejectWithValue }) => {
         try {
@@ -71,6 +86,23 @@ const authSlice = createSlice({
                 state.error = null;
             })
             .addCase(firebaseLoginPhone.rejected, (state, action) => {
+                state.isLoading = false;
+                state.isAuthenticate = false;
+                state.user = null;
+                state.error = action.payload || action.error;
+            })
+
+            .addCase(firebaseRegisterPhone.pending, (state) => {
+                state.isLoading = true;
+                state.error = null;
+            })
+            .addCase(firebaseRegisterPhone.fulfilled, (state, action) => {
+                state.isLoading = false;
+                state.isAuthenticate = action.payload.success;
+                state.user = action.payload.user || null;
+                state.error = null;
+            })
+            .addCase(firebaseRegisterPhone.rejected, (state, action) => {
                 state.isLoading = false;
                 state.isAuthenticate = false;
                 state.user = null;

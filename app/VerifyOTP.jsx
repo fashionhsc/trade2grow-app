@@ -16,6 +16,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import { auth } from '../config/firebase';
 import { firebaseLoginPhone } from '../store/slices/authSlice';
+import { showSuccessToast } from '../utils/toast';
 
 const VerifyOtp = () => {
     const dispatch = useDispatch();
@@ -74,6 +75,9 @@ const VerifyOtp = () => {
                         uid: firebaseUser.uid
                     },
                 });
+            } else if (resp?.payload?.success) {
+                showSuccessToast('Logged in successfully')
+                router.push('/dashboard'); // redirect on success
             }
 
         } catch (err) {
