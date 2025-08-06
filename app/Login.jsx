@@ -1,20 +1,17 @@
 import { API_URL } from '@env';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import MaterialIcons from '@expo/vector-icons/MaterialIcons';
+import { getAuth, signInWithPhoneNumber } from '@react-native-firebase/auth';
 import axios from 'axios';
-import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
 import { useRouter } from 'expo-router';
-import { signInWithPhoneNumber } from "firebase/auth";
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
 import GoogleLoginButton from '../components/GoogleLoginButton';
 import PhoneNumberInput from '../components/PhoneInput';
-import { auth } from '../config/firebase';
 import { regex } from '../constants/regex';
 
 const Login = () => {
-    const recaptchaVerifier = useRef(null);
     const router = useRouter();
     const [isMobileSelected, setIsMobileSelected] = useState(true);
     const [email, setEmail] = useState('');
@@ -57,12 +54,13 @@ const Login = () => {
             } else {
                 const { callingCode, phoneNumber } = phoneData;
                 const fullPhone = `+${callingCode}${phoneNumber}`;
-                const confirmation = await signInWithPhoneNumber(auth, fullPhone, recaptchaVerifier.current);
+                const confirmation = await signInWithPhoneNumber(getAuth(), fullPhone);
+
                 router.push({
                     pathname: "/VerifyOTP",
                     params: {
                         phoneNumber: fullPhone,
-                        verificationId: confirmation.verificationId,
+                        verificationId: confirmation._verificationId,
                     },
                 });
             }
@@ -85,10 +83,6 @@ const Login = () => {
                     easing="ease-out"
                     className="w-full bg-black p-6 rounded-2xl shadow-lg"
                 >
-                    <FirebaseRecaptchaVerifierModal
-                        ref={recaptchaVerifier}
-                        firebaseConfig={auth.app.options}
-                    />
                     <Text className="text-white text-xl font-semibold mb-4">Sign in with</Text>
 
                     {/* Toggle Options */}
@@ -171,7 +165,7 @@ const Login = () => {
                         <Text className="text-borderColor text-center text-base font-bold">Sign up</Text>
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity onPress={()=>router.push('/dashboard/leaderboard')} className="bg-black py-3 border border-borderColor rounded-lg my-4">
+                    <TouchableOpacity onPress={() => router.push('/dashboard/leaderboard')} className="bg-black py-3 border border-borderColor rounded-lg my-4">
                         <Text className="text-borderColor text-center text-base font-bold">Login</Text>
                     </TouchableOpacity>
                 </Animatable.View>
