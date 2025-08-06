@@ -17,93 +17,187 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
-
+import PhoneNumberInput from '../components/PhoneInput';
+import { regex } from '../constants/regex';
 
 
 const Signup = () => {
-    const dispatch = useDispatch(state => state.auth);
     const router = useRouter();
-    const { phoneNumber, uid, email } = useLocalSearchParams();
+    let { phoneNumber, uid, email } = useLocalSearchParams();
+    // phoneNumber = ''
     const [form, setForm] = useState({
         uid: uid,
         firstName: '',
         lastName: '',
         email: email || '',
         phone: phoneNumber || '',
-        gender: '',
+        gender: 'male',
     });
     const [errors, setErrors] = useState({});
     const [isFormValid, setIsFormValid] = useState(false);
     const [touched, setTouched] = useState({});
     const [emailCheckTimer, setEmailCheckTimer] = useState(null);
-
+    const [phoneCheckTimer, setPhoneCheckTimer] = useState(null);
 
     const handleChange = (key, value) => {
         const updatedForm = { ...form, [key]: value };
         setForm(updatedForm);
+        setTouched({ ...touched, [key]: true });
+        switch (key) {
+            case 'email': {
+                const emailRegex = regex.email;
+                if (!value || value.trim() === '') {
+                    setErrors(prev => ({ ...prev, email: 'Email is required' }));
+                    break;
+                }
 
-        if (key === 'email') {
-            // Clear existing timer
-            if (emailCheckTimer) clearTimeout(emailCheckTimer);
+                if (!emailRegex.test(value.trim())) {
+                    setErrors(prev => ({ ...prev, email: 'Enter a valid email address' }));
+                    break;
+                }
+                setErrors(prev => {
+                    const updated = { ...prev };
+                    delete updated.email;
+                    return updated;
+                });
+                if (emailCheckTimer) clearTimeout(emailCheckTimer);
+                const emailTimer = setTimeout(() => checkEmailAvailability(value.trim()), 500);
+                setEmailCheckTimer(emailTimer);
 
-            // Start new debounce timer
-            const timer = setTimeout(() => {
-                checkEmailAvailability(value);
-            }, 500); // wait 500ms after typing stops
+                break;
+            }
 
-            setEmailCheckTimer(timer);
+            case 'phone': {
+                const trimmed = typeof value === 'string' ? value.trim() : value?.phoneNumber?.trim();
 
-            setErrors(prev => {
-                const { email, ...rest } = prev;
-                return rest;
-            });
+                if (!trimmed) {
+                    setErrors(prev => ({ ...prev, phone: 'Phone is required' }));
+                    break;
+                }
+
+                const phoneRegex = regex.phone; // India 10-digit number starting with 6-9
+                if (!phoneRegex.test(trimmed)) {
+                    setErrors(prev => ({ ...prev, phone: 'Enter a valid 10-digit Indian phone number' }));
+                    break;
+                }
+
+                setErrors(prev => {
+                    const updated = { ...prev };
+                    delete updated.phone;
+                    return updated;
+                });
+
+                if (phoneCheckTimer) clearTimeout(phoneCheckTimer);
+                const phoneTimer = setTimeout(() => checkPhoneAvailability(trimmed), 500);
+                setPhoneCheckTimer(phoneTimer);
+
+                break;
+            }
+
+
+            case 'firstName':
+            case 'lastName': {
+                const trimmed = value.trim();
+                const fieldLabel = key === 'firstName' ? 'First name' : 'Last name';
+
+                if (!trimmed) {
+                    setErrors(prev => ({ ...prev, [key]: `${fieldLabel} is required` }));
+                    break;
+                }
+
+                const nameRegex = /^[A-Za-z]+$/;
+                if (!nameRegex.test(trimmed)) {
+                    setErrors(prev => ({ ...prev, [key]: `${fieldLabel} should contain only letters` }));
+                    break;
+                }
+
+                if (trimmed.length < 2) {
+                    setErrors(prev => ({ ...prev, [key]: `${fieldLabel} is too short` }));
+                    break;
+                }
+
+                if (trimmed.length > 20) {
+                    setErrors(prev => ({ ...prev, [key]: `${fieldLabel} is too long` }));
+                    break;
+                }
+
+                // Valid – remove error
+                setErrors(prev => {
+                    const updated = { ...prev };
+                    delete updated[key];
+                    return updated;
+                });
+
+                break;
+            }
+            default:
+                break;
         }
-        const updatedErrors = validateForm(updatedForm);
-        setErrors(prev => ({ ...prev, ...updatedErrors }));
 
+
+        const isValid = validateForm(updatedForm, errors);
+        setIsFormValid(isValid);
     };
 
+
+    const validateForm = (form, errors) => {
+        const hasEmpty = Object.entries(form).some(([key, value]) => {
+            if (typeof value === 'string') return value.trim() === '';
+            return !value;
+        });
+        return !hasEmpty && Object.keys(errors).length === 0;
+    };
+
+
+    const updateFieldError = (field, message) => {
+        setErrors(prev => {
+            const updatedErrors = { ...prev };
+
+            if (message) {
+                updatedErrors[field] = message;
+            } else {
+                delete updatedErrors[field];
+            }
+            setIsFormValid(Object.keys(updatedErrors).length === 0);
+            return updatedErrors;
+        });
+    };
+
+
+    // Email check
     const checkEmailAvailability = async (email) => {
         try {
             const { data } = await axios.post(`${API_URL}/auth/checkEmail`, { email });
-            if (data?.success) {
-                setErrors(prev => {
-                    const { email, ...rest } = prev;
-                    return rest;
-                });
-            } else {
-                setErrors(prev => ({
-                    ...prev,
-                    email: data?.message || 'Email is already registered',
-                }));
-            }
+            updateFieldError('email', data?.success ? null : data?.message || 'Email is already registered');
         } catch (err) {
             const errorMessage = err.response?.data?.message || 'Something went wrong';
-            setErrors(prev => ({
-                ...prev,
-                email: errorMessage,
-            }));
+            updateFieldError('email', errorMessage);
+        }
+    };
 
+    // Phone check
+    const checkPhoneAvailability = async (phone) => {
+        try {
+            const { data } = await axios.post(`${API_URL}/auth/checkphone`, { phone });
+            updateFieldError('phone', data?.success ? null : data?.message || 'Phone is already registered');
+        } catch (err) {
+            const errorMessage = err.response?.data?.message || 'Something went wrong';
+            updateFieldError('phone', errorMessage);
         }
     };
 
 
-    const handleBlur = (key) => {
-        setTouched({ ...touched, [key]: true });
-    };
-
     const handleGenderSelect = (gender) => {
+        if (!gender || gender == '') return setErrors((prev => ({ ...prev, 'gender': 'Gender is required' })))
         const updatedForm = { ...form, gender };
         setForm(updatedForm);
 
-        const updatedErrors = validateForm(updatedForm);
-        setErrors(updatedErrors);
         setTouched({ ...touched, gender: true });
     };
 
+
     const handleSubmit = async () => {
-        const validationErrors = validateForm(form);
+        const validationErrors = validateForm(form,errors);
         if (Object.keys(validationErrors).length !== 0) return;
         console.log('Form Data:', form)
         router.push({
@@ -113,60 +207,9 @@ const Signup = () => {
 
     };
 
-
-    const validateForm = (formToValidate = form) => {
-        const newErrors = { ...errors };
-
-        // First Name
-        if (!formToValidate.firstName.trim()) {
-            newErrors.firstName = 'First name is required';
-        } else if (!/^[A-Za-z\s]+$/.test(formToValidate.firstName)) {
-            newErrors.firstName = 'First name must contain only letters';
-        } else {
-            delete newErrors.firstName;
-        }
-
-        // Last Name
-        if (!formToValidate.lastName.trim()) {
-            newErrors.lastName = 'Last name is required';
-        } else if (!/^[A-Za-z\s]+$/.test(formToValidate.lastName)) {
-            newErrors.lastName = 'Last name must contain only letters';
-        } else {
-            delete newErrors.lastName;
-        }
-
-
-        // Email
-        if (!email) {
-            if (!formToValidate.email.trim()) {
-                newErrors.email = 'Email is required';
-            } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formToValidate.email)) {
-                newErrors.email = 'Invalid email format';
-            }
-        }
-
-        // Phone
-        if (!phoneNumber) {
-            if (!formToValidate.phone.trim()) {
-                newErrors.phone = 'Phone number is required';
-            } else if (!/^\d{10}$/.test(formToValidate.phone)) {
-                newErrors.phone = 'Phone number must be 10 digits';
-            } else {
-                delete newErrors.phone;
-            }
-        }
-
-        // Gender
-        if (!formToValidate.gender) {
-            newErrors.gender = 'Please select a gender';
-        } else {
-            delete newErrors.gender;
-        }
-        console.log('email>>', email)
-        console.log('newErrors>>', newErrors)
-        setIsFormValid(Object.keys(newErrors).length === 0);
-        return newErrors;
-    };
+    const handlePhoneChange = (data) => {
+        handleChange('phone', data)
+    }
 
 
 
@@ -208,7 +251,6 @@ const Signup = () => {
                                         placeholderTextColor="#999"
                                         value={form.firstName}
                                         onChangeText={(text) => handleChange('firstName', text)}
-                                        onBlur={() => handleBlur('firstName')}
                                     />
                                 </View>
                                 {touched.firstName && errors.firstName && (
@@ -227,11 +269,10 @@ const Signup = () => {
 
                                     <TextInput
                                         className="bg-zinc-900 border border-gray-600 rounded-md text-white px-10 py-5"
-                                        placeholder="First Name"
+                                        placeholder="Last Name"
                                         placeholderTextColor="#999"
                                         value={form.lastName}
                                         onChangeText={(text) => handleChange('lastName', text)}
-                                        onBlur={() => handleBlur('lastName')}
                                     />
                                 </View>
                                 {touched.lastName && errors.lastName && (
@@ -241,14 +282,14 @@ const Signup = () => {
                             <View>
                                 <Text className="text-[#767C8C] font-medium text-lg">Email</Text>
                                 <View className="relative">
-                                    <Fontisto name="email" size={20} color="#fff" style={{ position: 'absolute', top: 18, left: 10, zIndex: 10 }} />
+                                    <Fontisto name="email" size={20} color={`${email ? 'gray' : 'white'}`} style={{ position: 'absolute', top: 18, left: 10, zIndex: 10 }} />
                                     <TextInput
-                                        className="bg-zinc-900 border border-gray-600 rounded-md text-white px-10 py-5"
+                                        className={`bg-zinc-900 border border-gray-600 rounded-md ${email ? 'text-[#767C8C]' : 'text-white'} px-10 py-5`}
                                         placeholder="abc@xyz.com"
                                         placeholderTextColor="#999"
                                         value={form.email}
                                         onChangeText={(text) => handleChange('email', text)}
-                                        onBlur={() => handleBlur('email')}
+                                        editable={email ? false : true}
                                         keyboardType="email-address"
                                     />
                                 </View>
@@ -256,22 +297,35 @@ const Signup = () => {
                                     <Text className="text-red-500 text-sm mt-1">{errors.email}</Text>
                                 )}
                             </View>
+
+
+
                             <View>
                                 <Text className="text-[#767C8C] font-medium text-lg">Phone</Text>
                                 <View className="relative">
-                                    <Ionicons name="call-outline" size={20} color="#767C8C" style={{ position: 'absolute', top: 18, left: 10, zIndex: 10 }} />
-                                    <TextInput
-                                        className="bg-zinc-900 border border-gray-600 rounded-md text-[#767C8C] px-10 py-5"
-                                        value={form.phone}
-                                        onChangeText={(text) => handleChange('phone', text)}
-                                        editable={form.phone ? false : true}
-                                        onBlur={() => handleBlur('phone')}
-                                    />
+                                    {
+                                        phoneNumber ? (
+                                            <>
+                                                <Ionicons name="call-outline" size={20} color="#767C8C" style={{ position: 'absolute', top: 18, left: 10, zIndex: 10 }} />
+                                                <TextInput
+                                                    className="bg-zinc-900 border border-gray-600 rounded-md text-[#767C8C] px-10 py-5"
+                                                    value={form.phone}
+                                                    onChangeText={(text) => handleChange('phone', text)}
+                                                    editable={false}
+                                                />
+                                            </>
+                                        ) : (
+                                            <>
+                                                <PhoneNumberInput onChange={handlePhoneChange} />
+                                                {touched.phone && errors.phone && (
+                                                    <Text className="text-red-500 text-sm mt-1">{errors.phone}</Text>
+                                                )}
+                                            </>
+                                        )
+                                    }
                                 </View>
-                                {touched.phone && errors.phone && (
-                                    <Text className="text-red-500 text-sm mt-1">{errors.phone}</Text>
-                                )}
                             </View>
+
 
 
                             {/* Gender */}

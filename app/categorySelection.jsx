@@ -1,11 +1,11 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { Image, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
 import api from '../services/api';
 import { firebaseRegisterPhone } from '../store/slices/authSlice';
-import { showErrorToast } from '../utils/toast';
+import { showErrorToast, showSuccessToast } from '../utils/toast';
 
 const CategorySelection = () => {
     const dispatch = useDispatch();
@@ -16,10 +16,14 @@ const CategorySelection = () => {
     const handleSubmit = async () => {
         try {
             parsedForm.category = selectedCat._id;
-            console.log('parsedForm>>>', parsedForm)
+            if (parsedForm?.phone?.callingCode && parsedForm?.phone?.phoneNumber) {
+                const fullPhone = `+${parsedForm.phone.callingCode}${parsedForm.phone.phoneNumber}`;
+                parsedForm.phone = fullPhone;
+            }
             const resp = await dispatch(firebaseRegisterPhone(parsedForm))
             console.log(resp?.payload)
             if (resp?.payload?.success) {
+                showSuccessToast(resp?.payload?.message)
                 router.push('/dashboard'); // redirect on success
             } else {
                 showErrorToast(resp?.payload?.message || 'Registration failed');
@@ -34,7 +38,6 @@ const CategorySelection = () => {
     const fetchCategories = async () => {
         try {
             const resp = await api.get(`/category/list/user`);
-            console.log('Categories:', resp.data);
             if (resp.data?.categories) {
                 setCategories(resp.data.categories);
             }
@@ -59,6 +62,7 @@ const CategorySelection = () => {
                             ? 'bg-yellow-400 border-yellow-400'
                             : 'bg-zinc-900 border-gray-600'
                             }`}>
+                            <Image source={require('../assets/images/category_logo.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
                             <Text className={`text-lg font-semibold ${selectedCat.name === item.name ? 'text-black' : 'text-white'
                                 }`}>
                                 {item.name}

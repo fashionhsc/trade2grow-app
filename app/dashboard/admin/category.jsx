@@ -1,7 +1,7 @@
 import { Text } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
-const category = () => {
+const Category = () => {
     return (
         <SafeAreaView className="flex-1 bg-black justify-center items-center">
             <Text className="text-white text-2xl">👤 Admin Category Screen</Text>
@@ -9,4 +9,4 @@ const category = () => {
     )
 }
 
-export default category
+export default Category

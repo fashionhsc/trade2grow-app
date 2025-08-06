@@ -1,6 +1,9 @@
+import { API_URL } from '@env';
 import { AntDesign } from '@expo/vector-icons';
-import { useLocalSearchParams, useRouter } from 'expo-router';
-import { PhoneAuthProvider, signInWithCredential } from 'firebase/auth';
+import axios from 'axios';
+import { FirebaseRecaptchaVerifierModal } from 'expo-firebase-recaptcha';
+import { router, useLocalSearchParams } from 'expo-router';
+import { PhoneAuthProvider, signInWithCredential, signInWithPhoneNumber } from 'firebase/auth';
 import { useEffect, useRef, useState } from 'react';
 import {
     KeyboardAvoidingView,
@@ -13,20 +16,22 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import Toast from 'react-native-toast-message';
 import { useDispatch } from 'react-redux';
 import { auth } from '../config/firebase';
-import { firebaseLoginPhone } from '../store/slices/authSlice';
+import { firebaseLoginPhone, setUser } from '../store/slices/authSlice';
 import { showSuccessToast } from '../utils/toast';
 
+
+
 const VerifyOtp = () => {
+    const recaptchaVerifier = useRef(null);
     const dispatch = useDispatch();
-    const { phoneNumber, verificationId } = useLocalSearchParams();
+    const { phoneNumber, verificationId, email } = useLocalSearchParams();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
     const inputs = useRef([]);
     const [resendTime, setResendTime] = useState(30);
     const [isButtonEnabled, setIsButtonEnabled] = useState(false);
-    const router = useRouter();
-
 
     useEffect(() => {
         const filled = otp.every((digit) => digit !== '');
@@ -62,33 +67,59 @@ const VerifyOtp = () => {
     const handleVerify = async () => {
         const fullOtp = otp.join('')
         try {
-            const credential = PhoneAuthProvider.credential(verificationId, fullOtp);
-            const userCredential = await signInWithCredential(auth, credential);
+            if (email) {
+                const resp = await axios.post(`${API_URL}/auth/verify-otp`, { email, fullOtp });
+                console.log('resp?.data>>>>', resp?.data?.user)
+                if (resp?.data?.success == false && resp?.data?.message == 'user not found') {
+                    router.push({
+                        pathname: "/Signup",
+                        params: {
+                            email: email,
+                        },
+                    });
+                } else if (resp?.data?.success) {
+                    showSuccessToast('Logged in successfully!')
+                    router.push('/dashboard'); // redirect on success
+                    dispatch(setUser({ user: resp?.data?.user }))
+                }
+            } else {
+                const credential = PhoneAuthProvider.credential(verificationId, fullOtp);
+                const userCredential = await signInWithCredential(auth, credential);
 
-            const firebaseUser = userCredential.user;
-            const resp = await dispatch(firebaseLoginPhone(firebaseUser))
-            if (resp?.payload?.success == false && resp?.payload?.message == 'user not found') {
-                router.push({
-                    pathname: "/Signup",
-                    params: {
-                        phoneNumber: phoneNumber,
-                        uid: firebaseUser.uid
-                    },
-                });
-            } else if (resp?.payload?.success) {
-                showSuccessToast('Logged in successfully')
-                router.push('/dashboard'); // redirect on success
+                const firebaseUser = userCredential.user;
+                const resp = await dispatch(firebaseLoginPhone(firebaseUser))
+                if (resp?.payload?.success == false && resp?.payload?.message == 'user not found') {
+                    router.push({
+                        pathname: "/Signup",
+                        params: {
+                            phoneNumber: phoneNumber,
+                            uid: firebaseUser.uid
+                        },
+                    });
+                } else if (resp?.payload?.success) {
+                    showSuccessToast('Logged in successfully')
+                    router.push('/dashboard'); // redirect on success
+                }
             }
 
         } catch (err) {
-            console.error("OTP verification failed", err.message);
+            Toast.show({
+                type: 'error',
+                text1: 'Invalid OTP',
+            });
+            console.log("OTP verification failed", err.message);
         }
     };
 
-    const handleResend = () => {
-        if (resendTime === 0) {
-            console.log('Resending OTP...');
-            setResendTime(30);
+    const handleResend = async () => {
+        try {
+            if (resendTime === 0) {
+                console.log('Resending OTP...');
+                setResendTime(30);
+                const confirmation = await signInWithPhoneNumber(auth, phoneNumber, recaptchaVerifier.current);
+            }
+        } catch (error) {
+            console.error("Resend Otp Error: ", error.message);
         }
     };
 
@@ -104,9 +135,13 @@ const VerifyOtp = () => {
                     keyboardShouldPersistTaps="handled"
                 >
                     <View className="flex-1 p-10">
+                        <FirebaseRecaptchaVerifierModal
+                            ref={recaptchaVerifier}
+                            firebaseConfig={auth.app.options}
+                        />
                         {/* Header */}
                         <View className="flex flex-row gap-5 items-baseline mb-6">
-                            <TouchableOpacity onPress={() => router.push('/Login')}>
+                            <TouchableOpacity onPress={() => router.push('/')}>
                                 <AntDesign name="left" size={20} color="white" />
                             </TouchableOpacity>
                             <Text className="text-white text-2xl font-bold">Verify OTP</Text>

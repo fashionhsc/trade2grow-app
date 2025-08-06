@@ -72,7 +72,14 @@ export const logout = createAsyncThunk('/auth/logout',
 const authSlice = createSlice({
     name: 'auth',
     initialState,
-    reducers: {},
+    reducers: {
+        setUser: (state, action) => {
+            state.user = action.payload.user ? action.payload.user : null;
+            state.isAuthenticate = action.payload.success;
+            state.isLoading = false;
+            state.error = action.payload.message ? action.payload.message : null;
+        }
+    },
     extraReducers: (builder) => {
         builder
             .addCase(firebaseLoginPhone.pending, (state) => {
@@ -143,4 +150,5 @@ const authSlice = createSlice({
     }
 });
 
+export const { setUser } = authSlice.actions
 export default authSlice.reducer;

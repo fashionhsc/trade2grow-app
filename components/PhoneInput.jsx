@@ -8,8 +8,13 @@ const PhoneNumberInput = ({ onChange }) => {
     const [phoneNumber, setPhoneNumber] = useState("");
 
     const handlePhoneChange = (text) => {
-        setPhoneNumber(text);
-        onChange && onChange({ countryCode, callingCode, phoneNumber: text });
+        // Remove non-digit characters
+        const digitsOnly = text.replace(/\D/g, '');
+
+        // Limit to 10 digits
+        const limited = digitsOnly.slice(0, 10);
+        setPhoneNumber(limited);
+        onChange && onChange({ countryCode, callingCode, phoneNumber: limited });
     };
 
     const handleCountrySelect = (country) => {
@@ -24,7 +29,7 @@ const PhoneNumberInput = ({ onChange }) => {
     };
 
     return (
-        <View className="flex-row items-center border border-borderColor rounded-lg px-3 py-2 bg-transparent">
+        <View className="flex-row items-center border border-gray-500 bg-zinc-900 rounded-lg px-3">
             <CountryPicker
                 countryCode={countryCode}
                 withFlag
@@ -40,6 +45,7 @@ const PhoneNumberInput = ({ onChange }) => {
                 placeholderTextColor="#aaa"
                 onChangeText={handlePhoneChange}
                 value={phoneNumber}
+                maxLength={10}
             />
         </View>
     );
