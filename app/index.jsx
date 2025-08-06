@@ -23,6 +23,9 @@ const Index = () => {
       }
     </View>
 
+
+
+
   );
 };
 

@@ -16,6 +16,7 @@ module.exports = {
         danger: '#EF4444',
         success: '#10B981',
         warning: '#F59E0B',
+        NeutralGray: '#E6E6E6',
       },
       borderRadius: {
         sm: 8,

@@ -170,6 +170,10 @@ const Login = () => {
                     {/* <TouchableOpacity className="bg-black py-3 border border-borderColor rounded-lg my-4">
                         <Text className="text-borderColor text-center text-base font-bold">Sign up</Text>
                     </TouchableOpacity> */}
+
+                    <TouchableOpacity onPress={()=>router.push('/dashboard/leaderboard')} className="bg-black py-3 border border-borderColor rounded-lg my-4">
+                        <Text className="text-borderColor text-center text-base font-bold">Login</Text>
+                    </TouchableOpacity>
                 </Animatable.View>
             </ScrollView>
         </KeyboardAvoidingView>
