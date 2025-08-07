@@ -1,19 +1,10 @@
 import { API_URL } from '@env';
 import { AntDesign } from '@expo/vector-icons';
-import auth, { PhoneAuthProvider } from '@react-native-firebase/auth';
+import { getAuth, PhoneAuthProvider, signInWithCredential } from '@react-native-firebase/auth';
 import axios from 'axios';
 import { router, useLocalSearchParams } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
-import {
-    KeyboardAvoidingView,
-    Platform,
-    ScrollView,
-    StatusBar,
-    Text,
-    TextInput,
-    TouchableOpacity,
-    View,
-} from 'react-native';
+import { KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { useDispatch } from 'react-redux';
@@ -22,10 +13,12 @@ import { showSuccessToast } from '../utils/toast';
 
 
 
+
 const VerifyOtp = () => {
     const dispatch = useDispatch();
     let { phoneNumber, verificationId, email } = useLocalSearchParams();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
+    const [loading, setLoading] = useState(false);
     const inputs = useRef([]);
     const [resendTime, setResendTime] = useState(30);
     const [isButtonEnabled, setIsButtonEnabled] = useState(false);
@@ -62,6 +55,7 @@ const VerifyOtp = () => {
 
     const handleVerify = async () => {
         const fullOtp = otp.join('')
+        setLoading(true);
         try {
             if (email) {
                 const resp = await axios.post(`${API_URL}/auth/verify-otp`, { email, fullOtp });
@@ -81,7 +75,7 @@ const VerifyOtp = () => {
             } else {
                 console.log('verifi :', verificationId)
                 const credential = PhoneAuthProvider.credential(verificationId, fullOtp);
-                const userCredential = await auth().signInWithCredential(credential);
+                const userCredential = await signInWithCredential(getAuth(), credential);
                 const firebaseUser = userCredential.user;
                 const resp = await dispatch(firebaseLoginPhone(firebaseUser))
                 if (resp?.payload?.success == false && resp?.payload?.message == 'user not found') {
@@ -104,6 +98,8 @@ const VerifyOtp = () => {
                 text1: 'Invalid OTP',
             });
             console.log("OTP verification failed", err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -123,12 +119,8 @@ const VerifyOtp = () => {
             <StatusBar barStyle="light-content" backgroundColor="black" />
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                className="flex-1"
-            >
-                <ScrollView
-                    contentContainerStyle={{ flexGrow: 1 }}
-                    keyboardShouldPersistTaps="handled"
-                >
+                className="flex-1">
+                <ScrollView contentContainerStyle={{ flexGrow: 1 }} keyboardShouldPersistTaps="handled">
                     <View className="flex-1 p-10">
                         {/* Header */}
                         <View className="flex flex-row gap-5 items-baseline mb-6">
@@ -163,10 +155,10 @@ const VerifyOtp = () => {
                             {/* Resend OTP */}
                             <TouchableOpacity
                                 onPress={handleResend}
-                                disabled={resendTime !== 0}
+                                disabled={resendTime !== 0 || loading}
                                 className="bg-gray-900 py-3 mt-2 items-center rounded-lg"
                             >
-                                <Text className={`ml-2 font-semibold ${resendTime === 0 ? 'text-yellow-400' : 'text-gray-500'}`}>
+                                <Text className={`ml-2 font-semibold ${resendTime === 0 || !loading ? 'text-yellow-400' : 'text-gray-500'}`}>
                                     I haven't received OTP {resendTime !== 0 ? `(${resendTime})s` : ''}
                                 </Text>
                             </TouchableOpacity>
@@ -174,11 +166,11 @@ const VerifyOtp = () => {
                             {/* Verify Button */}
                             <TouchableOpacity
                                 onPress={handleVerify}
-                                disabled={!isButtonEnabled}
+                                disabled={!isButtonEnabled || loading}
                                 className={`py-3 rounded-lg mt-2 ${isButtonEnabled ? 'bg-yellow-400' : 'bg-gray-700'}`}
                             >
                                 <Text className={`text-center text-base font-bold ${isButtonEnabled ? 'text-black' : 'text-gray-400'}`}>
-                                    Verify OTP
+                                    {loading ? 'Verifing...' : 'Verify Otp'}
                                 </Text>
                             </TouchableOpacity>
                         </View>

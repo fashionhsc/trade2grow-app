@@ -14,6 +14,7 @@ import { regex } from '../constants/regex';
 const Login = () => {
     const router = useRouter();
     const [isMobileSelected, setIsMobileSelected] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
     const [phoneData, setPhoneData] = useState({
@@ -39,6 +40,7 @@ const Login = () => {
         }
     };
     const handleOtpSubmit = async () => {
+        setLoading(true);
         try {
 
             if (email) {
@@ -52,6 +54,7 @@ const Login = () => {
                     });
                 }
             } else {
+                if (!phoneData.phoneNumber) return;
                 const { callingCode, phoneNumber } = phoneData;
                 const fullPhone = `+${callingCode}${phoneNumber}`;
                 const confirmation = await signInWithPhoneNumber(getAuth(), fullPhone);
@@ -67,6 +70,8 @@ const Login = () => {
 
         } catch (error) {
             console.error("OTP Error: ", error.message);
+        } finally {
+            setLoading(false);
         }
     };
     const toggleMethod = () => setIsMobileSelected((prev) => !prev);
@@ -147,8 +152,8 @@ const Login = () => {
                     )}
 
 
-                    <TouchableOpacity onPress={handleOtpSubmit} className="bg-borderColor py-3 rounded-lg my-4">
-                        <Text className="text-black text-center text-base font-bold">Get OTP</Text>
+                    <TouchableOpacity onPress={handleOtpSubmit} disabled={loading} className="bg-borderColor py-3 rounded-lg my-4">
+                        <Text className="text-black text-center text-base font-bold">{loading ? 'Sending...' : 'Send OTP'}</Text>
                     </TouchableOpacity>
 
 

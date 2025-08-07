@@ -32,7 +32,6 @@ const CategorySelection = () => {
             console.log("registeration is failed", err.message);
             showErrorToast(err.message || 'Internal error');
         }
-
     }
 
     const fetchCategories = async () => {

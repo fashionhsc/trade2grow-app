@@ -1,17 +1,26 @@
-import { useFocusEffect } from 'expo-router';
-import { useCallback, useState } from 'react';
-import { ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { Image, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { useDispatch } from 'react-redux';
 import api from '../../services/api';
+import { setLeaderboardList, setLeaderboardUser } from '../../store/slices/leaderboard';
+import { router } from 'expo-router';
 
 const Leaderboard = () => {
+    const dispatch = useDispatch();
     const [leaderboard, setLeaderboard] = useState([]);
     const [isMonthlySelected, setIsMonthlySelected] = useState(true);
-
+    const [colorsMap, setColorsMap] = useState({});
+    const rankImages = {
+        1: require('../../assets/images/rank_1.png'),
+        2: require('../../assets/images/rank_2.png'),
+        3: require('../../assets/images/rank_3.png'),
+    };
     const fetchLeaderboard = async () => {
         try {
             const resp = await api.get(`/user/leaderboard/all`);
             if (resp.data?.data) {
                 setLeaderboard(resp.data.data);
+                dispatch(setLeaderboardList(resp.data.data))
             }
         } catch (error) {
             console.log('Error fetching leaderboard:', error?.response?.data || error.message);
@@ -20,8 +29,10 @@ const Leaderboard = () => {
 
     const toggleMethod = () => setIsMonthlySelected((prev) => !prev);
 
-    const handleLeaderboardPress = (data) => {
-        console.log('data>>>>', data)
+    const handleLeaderboardPress = (data, bgColor) => {
+        const leaderboardUser = { ...data, bgColor };
+        dispatch(setLeaderboardUser(leaderboardUser));
+        router.push('/dashboard/leaderboardDetail');
     }
 
     const getRandomColor = () => {
@@ -33,11 +44,19 @@ const Leaderboard = () => {
         return color;
     };
 
-    useFocusEffect(
-        useCallback(() => {
-            fetchLeaderboard();
-        }, [])
-    );
+    useEffect(() => {
+        fetchLeaderboard();
+    }, [])
+
+    useEffect(() => {
+        if (leaderboard && leaderboard.length > 0) {
+            const newColors = {};
+            leaderboard.forEach(entry => {
+                newColors[entry._id] = getRandomColor();
+            });
+            setColorsMap(newColors);
+        }
+    }, [leaderboard]);
 
     return (
         <View className="bg-black flex-1 px-3">
@@ -67,11 +86,12 @@ const Leaderboard = () => {
 
                         const fullName = `${userId?.firstName} ${userId?.lastName}`;
                         const initials = `${userId?.firstName[0]}${userId?.lastName[0]}`;
+                        const bgColor = colorsMap[entry._id];
 
                         return (
                             <TouchableOpacity
                                 key={entry._id}
-                                onPress={() => handleLeaderboardPress(entry)}
+                                onPress={() => handleLeaderboardPress(entry, bgColor)}
                                 style={{ backgroundColor: '#fff', display: 'flex', flexDirection: 'row', padding: 10, justifyContent: 'center', alignItems: 'center' }}
                                 className='rounded-2xl'
                             >
@@ -81,8 +101,8 @@ const Leaderboard = () => {
                                 </View>
 
                                 {/* Initials */}
-                                <View style={{ width: '20%', alignItems: 'center' }}>
-                                    <Text className='font-semibold text-2xl' style={{ paddingVertical: 12, paddingHorizontal: 15, borderWidth: 2, borderRadius: 50, borderColor: '#E6E6E6', backgroundColor: getRandomColor() }}>{initials}</Text>
+                                <View style={{ width: '15%', height: 55, backgroundColor: bgColor, borderRadius: 50, marginHorizontal: 10 }}>
+                                    <Text className='font-semibold text-2xl m-auto'>{initials}</Text>
                                 </View>
 
                                 {/* Full name + Points */}
@@ -93,7 +113,10 @@ const Leaderboard = () => {
 
                                 {/* Category */}
                                 <View style={{ width: '20%' }}>
-                                    {/* <Text className='text-gray-400 text-sm'>{category?.name}</Text> */}
+                                    <Image
+                                        source={rankImages[index + 1]}
+                                        style={{ width: 50, height: 50 }}
+                                    />
                                 </View>
                             </TouchableOpacity>
                         );
