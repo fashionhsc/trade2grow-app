@@ -107,9 +107,44 @@ const VerifyOtp = () => {
             if (resendTime === 0) {
                 console.log('Resending OTP...');
                 setResendTime(30);
+                resendOtp();
             }
         } catch (error) {
             console.error("Resend Otp Error: ", error.message);
+        }
+    };
+
+    const resendOtp = async () => {
+        setLoading(true);
+        try {
+
+            if (email) {
+                const res = await axios.post(`${API_URL}/auth/send-otp`, { email });
+                if (res?.data?.success) {
+                    router.push({
+                        pathname: "/VerifyOTP",
+                        params: {
+                            email: email
+                        },
+                    });
+                }
+            } else {
+                if (!phoneNumber) return;
+                const confirmation = await signInWithPhoneNumber(getAuth(), phoneNumber);
+
+                router.push({
+                    pathname: "/VerifyOTP",
+                    params: {
+                        phoneNumber,
+                        verificationId: confirmation._verificationId,
+                    },
+                });
+            }
+
+        } catch (error) {
+            console.error("OTP Error: ", error.message);
+        } finally {
+            setLoading(false);
         }
     };
 
