@@ -1,13 +1,14 @@
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch } from 'react-redux';
-import api from '../services/api';
-import { firebaseRegisterPhone } from '../store/slices/authSlice';
-import { showErrorToast, showSuccessToast } from '../utils/toast';
+import api from '../../services/api';
+import { firebaseRegisterPhone } from '../../store/slices/authSlice';
+import { showErrorToast, showSuccessToast } from '../../utils/toast';
 
 const CategorySelection = () => {
+    const router = useRouter();
     const dispatch = useDispatch();
     const { form } = useLocalSearchParams();
     let parsedForm = JSON.parse(form);
@@ -24,7 +25,8 @@ const CategorySelection = () => {
             console.log(resp?.payload)
             if (resp?.payload?.success) {
                 showSuccessToast(resp?.payload?.message)
-                router.push('/dashboard'); // redirect on success
+                router.replace('/(tabs)/home'); // redirect on success
+
             } else {
                 showErrorToast(resp?.payload?.message || 'Registration failed');
             }
@@ -61,7 +63,7 @@ const CategorySelection = () => {
                             ? 'bg-yellow-400 border-yellow-400'
                             : 'bg-zinc-900 border-gray-600'
                             }`}>
-                            <Image source={require('../assets/images/category_logo.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
+                            <Image source={require('../../assets/images/category_logo.png')} style={{ width: 40, height: 40 }} resizeMode="contain" />
                             <Text className={`text-lg font-semibold ${selectedCat.name === item.name ? 'text-black' : 'text-white'
                                 }`}>
                                 {item.name}

@@ -9,7 +9,10 @@ export default function RootLayout() {
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <Provider store={store}>
-        <Stack screenOptions={{ headerShown: false, }} />
+        <Stack screenOptions={{ headerShown: false, }} >
+          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        </Stack>
         <Toast />
       </Provider>
     </GestureHandlerRootView>

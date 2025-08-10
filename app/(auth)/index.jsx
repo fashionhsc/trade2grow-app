@@ -17,7 +17,7 @@ const Index = () => {
   return (
 
     <View style={{ justifyContent: showForm ? 'space-between' : 'center' }} className="flex-1 items-center bg-background">
-      <Image style={{ marginTop: showForm ? '100' : '0' }} source={require("../assets/images/splash-icon.png")} />
+      <Image style={{ marginTop: showForm ? '100' : '0' }} source={require("../../assets/images/splash-icon.png")} />
       {
         showForm && <Login />
       }

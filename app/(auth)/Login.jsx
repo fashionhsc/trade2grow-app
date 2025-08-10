@@ -7,9 +7,9 @@ import { useRouter } from 'expo-router';
 import { useState } from 'react';
 import { KeyboardAvoidingView, ScrollView, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import * as Animatable from 'react-native-animatable';
-import GoogleLoginButton from '../components/GoogleLoginButton';
-import PhoneNumberInput from '../components/PhoneInput';
-import { regex } from '../constants/regex';
+import GoogleLoginButton from '../../components/GoogleLoginButton';
+import PhoneNumberInput from '../../components/PhoneInput';
+import { regex } from '../../constants/regex';
 
 const Login = () => {
     const router = useRouter();
@@ -170,7 +170,7 @@ const Login = () => {
                         <Text className="text-borderColor text-center text-base font-bold">Sign up</Text>
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity onPress={() => router.push('/dashboard/leaderboard')} className="bg-black py-3 border border-borderColor rounded-lg my-4">
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/home')} className="bg-black py-3 border border-borderColor rounded-lg my-4">
                         <Text className="text-borderColor text-center text-base font-bold">Login</Text>
                     </TouchableOpacity>
                 </Animatable.View>

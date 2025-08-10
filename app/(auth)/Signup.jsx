@@ -17,8 +17,8 @@ import {
     View,
 } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import PhoneNumberInput from '../components/PhoneInput';
-import { regex } from '../constants/regex';
+import PhoneNumberInput from '../../components/PhoneInput';
+import { regex } from '../../constants/regex';
 
 
 const Signup = () => {

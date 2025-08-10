@@ -2,19 +2,18 @@ import { API_URL } from '@env';
 import { AntDesign } from '@expo/vector-icons';
 import { getAuth, PhoneAuthProvider, signInWithCredential } from '@react-native-firebase/auth';
 import axios from 'axios';
-import { router, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
 import { useDispatch } from 'react-redux';
-import { firebaseLoginPhone, setUser } from '../store/slices/authSlice';
-import { showSuccessToast } from '../utils/toast';
-
-
+import { firebaseLoginPhone, setUser } from '../../store/slices/authSlice';
+import { showSuccessToast } from '../../utils/toast';
 
 
 const VerifyOtp = () => {
+    const router = useRouter();
     const dispatch = useDispatch();
     let { phoneNumber, verificationId, email } = useLocalSearchParams();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -68,8 +67,8 @@ const VerifyOtp = () => {
                         },
                     });
                 } else if (resp?.data?.success) {
-                    showSuccessToast('Logged in successfully!')
-                    router.push('/dashboard'); // redirect on success
+                    showSuccessToast('Logged in successfully!');
+                    router.replace("/(tabs)/home");
                     dispatch(setUser({ user: resp?.data?.user }))
                 }
             } else {
@@ -88,7 +87,7 @@ const VerifyOtp = () => {
                     });
                 } else if (resp?.payload?.success) {
                     showSuccessToast('Logged in successfully')
-                    router.push('/dashboard'); // redirect on success
+                    router.replace("/(tabs)/home");
                 }
             }
 
