@@ -58,7 +58,6 @@ const VerifyOtp = () => {
         try {
             if (email) {
                 const resp = await axios.post(`${API_URL}/auth/verify-otp`, { email, fullOtp });
-                console.log('resp?.data>>>>', resp?.data?.user)
                 if (resp?.data?.success == false && resp?.data?.message == 'user not found') {
                     router.push({
                         pathname: "/Signup",
@@ -86,8 +85,8 @@ const VerifyOtp = () => {
                         },
                     });
                 } else if (resp?.payload?.success) {
-                    showSuccessToast('Logged in successfully')
-                    router.replace("/(tabs)/home");
+                    showSuccessToast(resp?.payload?.message || 'Logged in successfully')
+                    router.push("/(auth)/VideoSubscribe");
                 }
             }
 
@@ -119,26 +118,13 @@ const VerifyOtp = () => {
         try {
 
             if (email) {
-                const res = await axios.post(`${API_URL}/auth/send-otp`, { email });
-                if (res?.data?.success) {
-                    router.push({
-                        pathname: "/VerifyOTP",
-                        params: {
-                            email: email
-                        },
-                    });
-                }
+                await axios.post(`${API_URL}/auth/send-otp`, { email });
+                showSuccessToast('OTP sent successfully');
             } else {
                 if (!phoneNumber) return;
-                const confirmation = await signInWithPhoneNumber(getAuth(), phoneNumber);
+                await signInWithPhoneNumber(getAuth(), phoneNumber);
+                showSuccessToast('OTP sent successfully');
 
-                router.push({
-                    pathname: "/VerifyOTP",
-                    params: {
-                        phoneNumber,
-                        verificationId: confirmation._verificationId,
-                    },
-                });
             }
 
         } catch (error) {

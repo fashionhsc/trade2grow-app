@@ -12,11 +12,9 @@ const GoogleLoginButton = () => {
             });
             await GoogleSignin.hasPlayServices({ showPlayServicesUpdateDialog: true });
             const signInResult = await GoogleSignin.signIn();
-            console.log('>>>',signInResult);
             const idToken = signInResult.data?.idToken;
             const googleCredential = GoogleAuthProvider.credential(idToken);
             const userCredential = await signInWithCredential(getAuth(), googleCredential);
-            console.log('user>>>>', userCredential.user);
         } catch (error) {
             console.log('Error while signing with Google :', error);
         }

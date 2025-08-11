@@ -40,6 +40,13 @@
       "@react-native-firebase/auth",
       [
         "@react-native-google-signin/google-signin"
+      ],
+      [
+        "expo-video",
+        {
+          "supportsBackgroundPlayback": true,
+          "supportsPictureInPicture": true
+        }
       ]
     ],
     "experiments": {

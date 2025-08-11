@@ -24,7 +24,7 @@ const LeaderboardDetail = () => {
 
     const handleBack = () => {
         dispatch(resetLeaderboardUser());
-        router.push('/leaderboard');
+        router.replace('/leaderboard');
     };
 
     return (
@@ -87,7 +87,7 @@ const LeaderboardDetail = () => {
                                     />
                                 </View>
                                 <Image
-                                    source={require('../../../assets/images/silver.png')}
+                                    source={require('../../../assets/images/Silver.png')}
                                     style={{ width: 20, height: 20, position: 'absolute', right: 0, top: -6 }}
                                 />
                             </View>
