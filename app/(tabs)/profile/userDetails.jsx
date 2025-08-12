@@ -13,7 +13,7 @@ const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 const AVATAR_SIZE = SCREEN_WIDTH * 0.3; // 30% of screen width
 const PROGRESS_BAR_WIDTH = SCREEN_WIDTH * 0.5;
 
-const LeaderboardDetail = () => {
+const UserDetails = () => {
     const router = useRouter();
     const dispatch = useDispatch();
     const { leaderboardUser } = useSelector(state => state.leaderboard);
@@ -98,7 +98,7 @@ const LeaderboardDetail = () => {
 
                         {/* Navigation Buttons */}
                         <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-                            {['Badge'].map((tabLabel, index) => {
+                            {['Badge', 'Subscribe', 'Setting'].map((tabLabel, index) => {
                                 const tabValue = (index + 1).toString();
                                 const isActive = activeTab === tabValue;
                                 return (
@@ -125,7 +125,9 @@ const LeaderboardDetail = () => {
 
                         {/* Content */}
                         <View style={{ flex: 1, backgroundColor: 'black' }}>
-                            {/* {activeTab === '1' && <Badges />} */}
+                            {/* {activeTab === '1' && <Badges />}
+                            {activeTab === '2' && <Subscription />}
+                            {activeTab === '3' && <UserDetails />} */}
                         </View>
                     </View>
                 </View>
@@ -134,4 +136,4 @@ const LeaderboardDetail = () => {
     );
 };
 
-export default LeaderboardDetail;
+export default UserDetails;

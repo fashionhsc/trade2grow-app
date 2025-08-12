@@ -60,13 +60,9 @@ const Leaderboard = () => {
         return color;
     };
 
-    const userRank =
-        leaderboard.findIndex(entry => entry.userId._id === user._id) + 1;
+    const userRank = leaderboard.findIndex(entry => entry.userId._id === user._id) + 1;
 
-    const percentile =
-        leaderboard.length > 0
-            ? Math.round(((leaderboard.length - userRank) / leaderboard.length) * 100)
-            : 0;
+    const percentile = leaderboard.length > 0 ? Math.round(((leaderboard.length - userRank) / leaderboard.length) * 100) : 0;
 
     useEffect(() => {
         fetchLeaderboard();
@@ -125,7 +121,7 @@ const Leaderboard = () => {
                             <Text className='text-4xl font-bold text-white'>#{userRank || '--'}</Text>
                         </View>
                         <View className='w-[85%]'>
-                            <Text className='text-2xl font-bold text-white flex-wrap'>You are doing better than {percentile}% of other players!</Text>
+                            <Text className='text-2xl font-bold text-white flex-wrap px-2'>You are doing better than {percentile}% of other players!</Text>
                         </View>
                     </View>
 

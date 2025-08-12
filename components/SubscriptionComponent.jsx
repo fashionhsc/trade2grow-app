@@ -36,7 +36,7 @@ const SubscriptionComponent = ({ selectedPlan, setSelectedPlan, handlePayNow, on
                             Annual
                         </Text>
                         <Text className={`text-2xl md:text-2xl font-bold ${selectedPlan === "annual" ? "text-[#FFD700]" : "text-white"}`}>
-                            $79.99
+                            ₹4999
                         </Text>
                         <Text className={`text-xs md:text-sm ${selectedPlan === "annual" ? "text-[#FFD700]" : "text-gray-400"}`}>
                             per year
@@ -52,7 +52,7 @@ const SubscriptionComponent = ({ selectedPlan, setSelectedPlan, handlePayNow, on
                             Monthly
                         </Text>
                         <Text className={`text-2xl md:text-2xl font-bold ${selectedPlan === "monthly" ? "text-[#FFD700]" : "text-white"}`}>
-                            $7.99
+                            ₹499
                         </Text>
                         <Text className={`text-xs md:text-sm ${selectedPlan === "monthly" ? "text-[#FFD700]" : "text-gray-400"}`}>
                             per month

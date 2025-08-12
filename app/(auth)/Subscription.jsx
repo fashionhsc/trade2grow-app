@@ -1,7 +1,7 @@
 import { Ionicons } from "@expo/vector-icons";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { ImageBackground, TouchableOpacity } from "react-native";
+import { Alert, ImageBackground, TouchableOpacity } from "react-native";
 import RazorpayCheckout from "react-native-razorpay";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
@@ -14,17 +14,17 @@ const SubscriptionScreen = () => {
     const { user } = useSelector(state => state.auth)
     const router = useRouter();
     const [selectedPlan, setSelectedPlan] = useState("annual");
-
+    let currentStage;
 
     const handlePayNow = async () => {
+        currentStage = user?.currentStage;
         try {
             // Step 1: Create order on backend
             const { data } = await api.post('/user/payment/create-order', {
                 userId: user._id,
-                amount: selectedPlan === 'annual' ? 7999 : 799, // ₹
+                amount: selectedPlan === 'annual' ? 4999 : 499, // ₹
                 planType: selectedPlan
             });
-            console.log('data>>>>',data)
             // Step 2: Open Razorpay Checkout
             var options = {
                 description: 'Premium Subscription',
@@ -35,9 +35,9 @@ const SubscriptionScreen = () => {
                 name: 'Trade2Grow',
                 order_id: data.orderId,
                 prefill: {
-                    email: 'test@example.com',
-                    contact: '9999999999',
-                    name: 'Test User'
+                    email: user?.email,
+                    contact: user?.phone,
+                    name: `${user?.firstName} ${user?.lastName}`
                 },
                 theme: { color: '#FFD700' }
             };
@@ -49,19 +49,22 @@ const SubscriptionScreen = () => {
                     paymentId: paymentResult.razorpay_payment_id,
                     signature: paymentResult.razorpay_signature
                 });
-                
-                Alert.alert("Payment Success", "Your subscription is now active!");
-                
+
+
+                const resp = await api.post(`/user/stage/unlock-stage/`);
+
+                Alert.alert("Payment Success", `Congratulation, You have successfully unlocked stage ${currentStage + 1}`);
+
             }).catch((error) => {
-                console.log('paymentResult error>>',error)
+                console.log('paymentResult error>>', error)
                 Alert.alert("Payment Failed", error.description);
             });
 
         } catch (error) {
-            console.log(error.response);
-            console.log(error.request);
-            console.log(error.message);
-            Alert.alert("Error", "Something went wrong");
+            console.log("Error : ", error.response);
+            console.log("Error : ", error.request);
+            console.log("Error : ", error.message);
+            Alert.alert("Error : ", "Something went wrong");
         }
     };
 

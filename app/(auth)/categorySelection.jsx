@@ -14,6 +14,7 @@ const CategorySelection = () => {
     let parsedForm = JSON.parse(form);
     const [selectedCat, setSelectedCat] = useState({});
     const [categories, setCategories] = useState([]);
+
     const handleSubmit = async () => {
         try {
             parsedForm.category = selectedCat._id;
@@ -25,7 +26,7 @@ const CategorySelection = () => {
             console.log(resp?.payload)
             if (resp?.payload?.success) {
                 showSuccessToast(resp?.payload?.message)
-                router.replace('/(tabs)/home'); // redirect on success
+                router.push('/VideoSubscribe');
 
             } else {
                 showErrorToast(resp?.payload?.message || 'Registration failed');

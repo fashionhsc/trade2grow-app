@@ -53,7 +53,7 @@ const VideoSubscribe = () => {
                             <AntDesign name="arrowright" size={20} color="#000" />
                         </TouchableOpacity>
 
-                        <TouchableOpacity onPress={() => router.push('/(tabs)/home')}>
+                        <TouchableOpacity onPress={() => router.replace('/(tabs)/home')}>
                             <Text className="text-white text-lg md:text-xl mt-2 underline">
                                 Skip
                             </Text>

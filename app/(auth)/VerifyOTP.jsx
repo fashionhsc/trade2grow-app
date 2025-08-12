@@ -2,18 +2,19 @@ import { API_URL } from '@env';
 import { AntDesign } from '@expo/vector-icons';
 import { getAuth, PhoneAuthProvider, signInWithCredential } from '@react-native-firebase/auth';
 import axios from 'axios';
-import { useLocalSearchParams, useRouter } from 'expo-router';
+import { Redirect, useLocalSearchParams, useRouter } from 'expo-router';
 import { useEffect, useRef, useState } from 'react';
 import { KeyboardAvoidingView, Platform, ScrollView, StatusBar, Text, TextInput, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Toast from 'react-native-toast-message';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { firebaseLoginPhone, setUser } from '../../store/slices/authSlice';
 import { showSuccessToast } from '../../utils/toast';
 
 
 const VerifyOtp = () => {
     const router = useRouter();
+    const { isAuthenticate, user } = useSelector(state => state.auth);
     const dispatch = useDispatch();
     let { phoneNumber, verificationId, email } = useLocalSearchParams();
     const [otp, setOtp] = useState(['', '', '', '', '', '']);
@@ -71,7 +72,6 @@ const VerifyOtp = () => {
                     dispatch(setUser({ user: resp?.data?.user }))
                 }
             } else {
-                console.log('verifi :', verificationId)
                 const credential = PhoneAuthProvider.credential(verificationId, fullOtp);
                 const userCredential = await signInWithCredential(getAuth(), credential);
                 const firebaseUser = userCredential.user;
@@ -134,6 +134,9 @@ const VerifyOtp = () => {
         }
     };
 
+    if (isAuthenticate && user.role == 'admin') return <Redirect href={'/(admin)/dashboard'} />
+    if (isAuthenticate && user.role == 'user') return <Redirect href={'/(tabs)/home'} />
+    
     return (
         <SafeAreaView className="flex-1 bg-black">
             <StatusBar barStyle="light-content" backgroundColor="black" />
