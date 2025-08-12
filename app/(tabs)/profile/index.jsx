@@ -22,11 +22,7 @@ const Profile = () => {
     router.replace('/(tabs)/home');
   };
 
-
-  console.log('user>>>>>', user)
-
-
-  //  {"__v": 0, "_id": "689b2e35950cd43cd797a3ac", "badges": [], "category": {"__v": 0, "_id": "689b2dad950cd43cd797a3a3", "createdAt": "2025-08-12T12:03:57.351Z", "description": "For users interested in short-term market opportunities, technical analysis, and quick decision-making.", "name": "Trader"}, "coins": 0, "countryCode": "+91", "email": "nishant@gmail.com", "firstName": "Nishant", "isPaidUser": false, "joinedAt": "2025-08-12T12:06:13.624Z", "lastName": "Rathore", "phone": "8800784843", "role": "user", "uid": "kKK2hsZo6JN4GyEZRoxMWma8zhY2", "unlockedStrategies": [], "xp": 0}
+  console.log(user?.currentStage)
 
 
   return (
@@ -81,7 +77,7 @@ const Profile = () => {
                 <View style={{ height: 8, backgroundColor: 'white', borderRadius: 20, overflow: 'hidden' }}>
                   <View
                     style={{
-                      width: `${(user?.currentStage || 0) * 20}%`,
+                      width: `${(user?.currentStage?.stageId || 0) * 20}%`,
                       height: '100%',
                       backgroundColor: '#5C01A0',
                       borderRadius: 20,

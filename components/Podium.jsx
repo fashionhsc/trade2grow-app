@@ -40,7 +40,7 @@ const Podium = ({ data }) => {
 
                 {/* XP badge */}
                 <View className="bg-yellow-400 rounded-full px-3 py-1 mt-1">
-                    <Text className="text-black font-semibold text-lg">{coins} XP</Text>
+                    <Text className="text-black font-semibold text-lg">{coins} coins</Text>
                 </View>
 
                 {/* Podium block */}

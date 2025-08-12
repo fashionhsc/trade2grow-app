@@ -7,6 +7,7 @@ import { SafeAreaView } from "react-native-safe-area-context";
 import { useSelector } from "react-redux";
 import bgImage from "../../assets/images/bg_coinandcandle.png";
 import SubscriptionComponent from "../../components/SubscriptionComponent";
+import SuccessScreen from "../../components/SuccessScreen";
 import api from "../../services/api";
 
 
@@ -14,10 +15,10 @@ const SubscriptionScreen = () => {
     const { user } = useSelector(state => state.auth)
     const router = useRouter();
     const [selectedPlan, setSelectedPlan] = useState("annual");
-    let currentStage;
+    const [showSuccess, setShowSuccess] = useState(false);
+
 
     const handlePayNow = async () => {
-        currentStage = user?.currentStage;
         try {
             // Step 1: Create order on backend
             const { data } = await api.post('/user/payment/create-order', {
@@ -27,7 +28,7 @@ const SubscriptionScreen = () => {
             });
             // Step 2: Open Razorpay Checkout
             var options = {
-                description: 'Premium Subscription',
+                description: 'Stage Subscription',
                 image: 'https://yourlogo.com/logo.png',
                 currency: data.currency,
                 key: data.key,
@@ -50,10 +51,9 @@ const SubscriptionScreen = () => {
                     signature: paymentResult.razorpay_signature
                 });
 
+                Alert.alert("Payment Success", `Congratulation, Your payment has successfully received!`);
 
-                const resp = await api.post(`/user/stage/unlock-stage/`);
-
-                Alert.alert("Payment Success", `Congratulation, You have successfully unlocked stage ${currentStage + 1}`);
+                unlockStage();
 
             }).catch((error) => {
                 console.log('paymentResult error>>', error)
@@ -61,37 +61,57 @@ const SubscriptionScreen = () => {
             });
 
         } catch (error) {
-            console.log("Error : ", error.response);
-            console.log("Error : ", error.request);
-            console.log("Error : ", error.message);
+            console.log("Error 1 : ", error.response);
+            console.log("Error 2 : ", error.request);
+            console.log("Error 3 : ", error.message);
             Alert.alert("Error : ", "Something went wrong");
         }
     };
 
 
+    const unlockStage = async () => {
+        try {
+            const resp = await api.post(`/user/stage/unlock-stage`, user);
+            console.log('Stage unlocked response :', resp.data);
+            if (resp?.data?.success) {
+                setShowSuccess(true);
+            }
+        } catch (error) {
+            console.log("Error : ", JSON.stringify(error));
+        }
+    }
+
+
+    const handleCloseSuccess = () => {
+        setShowSuccess(false);
+    }
 
     return (
-        <ImageBackground
-            source={bgImage}
-            style={{ flex: 1 }}
-            resizeMode="cover"
-        >
+        showSuccess ? (
+            <SuccessScreen handleCloseSuccess={handleCloseSuccess}/>
+        ) : (
+            <ImageBackground
+                source={bgImage}
+                style={{ flex: 1 }}
+                resizeMode="cover"
+            >
 
-            {/* Foreground content */}
-            <SafeAreaView className="flex-1 bg-black/80 p-5">
-                {/* Close icon */}
-                <TouchableOpacity onPress={() => router.push('/(auth)/VideoSubscribe')}>
-                    <Ionicons name="close" size={24} color="#fff" />
-                </TouchableOpacity>
+                {/* Foreground content */}
+                <SafeAreaView className="flex-1 bg-black/80 p-5">
+                    {/* Close icon */}
+                    <TouchableOpacity onPress={() => router.push('/(auth)/VideoSubscribe')}>
+                        <Ionicons name="close" size={24} color="#fff" />
+                    </TouchableOpacity>
 
-                <SubscriptionComponent
-                    selectedPlan={selectedPlan}
-                    setSelectedPlan={setSelectedPlan}
-                    handlePayNow={handlePayNow}
-                    onTrial={() => alert("Trial started")}
-                />
-            </SafeAreaView>
-        </ImageBackground>
+                    <SubscriptionComponent
+                        selectedPlan={selectedPlan}
+                        setSelectedPlan={setSelectedPlan}
+                        handlePayNow={handlePayNow}
+                        onTrial={() => alert("Trial started")}
+                    />
+                </SafeAreaView>
+            </ImageBackground>
+        )
     );
 };
 

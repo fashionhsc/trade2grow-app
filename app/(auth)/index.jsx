@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
-import { Image, View } from "react-native";
 
 import { Redirect } from "expo-router";
 import { useSelector } from "react-redux";
-import Login from './Login';
+import { Image, View } from "react-native";
+
+import Login from './Login'
 
 const Index = () => {
   const [showForm, setShowForm] = useState(false);
@@ -20,7 +21,7 @@ const Index = () => {
 
   if (isAuthenticate && user.role == 'user') return <Redirect href={'/(tabs)/home'} />
   if (isAuthenticate && user.role == 'admin') return <Redirect href={'/(admin)/dashboard'} />
-  
+
   return (
 
     <View style={{ justifyContent: showForm ? 'space-between' : 'center' }} className="flex-1 items-center bg-background">
@@ -29,9 +30,6 @@ const Index = () => {
         showForm && <Login />
       }
     </View>
-
-
-
 
   );
 };

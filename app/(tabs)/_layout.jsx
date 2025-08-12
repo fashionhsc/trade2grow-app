@@ -12,49 +12,51 @@ export default function TabsLayout() {
 
     return (
         <Tabs screenOptions={{ headerShown: false }}
-            tabBar={({ state, descriptors, navigation }) => (
-                < View style={styles.container}>
-                    {state.routes.map((route, index) => {
-                        const isFocused = state.index === index;
-                        const baseName = route.name.split("/")[0];
+            tabBar={({ state, descriptors, navigation }) => {
 
-                        const iconName = {
-                            home: "home",
-                            search: "search",
-                            leaderboard: "stats-chart",
-                            profile: "person",
-                        }[baseName] || "ellipse";
+                return <View style={styles.container} >
+                    {
+                        state.routes.map((route, index) => {
+                            const isFocused = state.index === index;
+                            const baseName = route.name.split("/")[0];
 
-                        const onPress = () => {
-                            const event = navigation.emit({
-                                type: "tabPress",
-                                target: route.key,
-                                canPreventDefault: true,
-                            });
-                            if (!isFocused && !event.defaultPrevented) {
-                                navigation.navigate(route.name);
-                            }
-                        };
+                            const iconName = {
+                                home: "home",
+                                search: "search",
+                                leaderboard: "stats-chart",
+                                profile: "person",
+                            }[baseName] || "ellipse";
 
-                        return (
-                            <TouchableOpacity
-                                key={route.key}
-                                onPress={onPress}
-                                style={styles.tab}
-                                accessibilityRole="button"
-                                accessibilityState={isFocused ? { selected: true } : {}}
-                            >
-                                <Ionicons
-                                    name={iconName}
-                                    size={26}
-                                    color={isFocused ? "#FFD700" : "#999"}
-                                />
-                            </TouchableOpacity>
-                        );
-                    })}
+                            const onPress = () => {
+                                const event = navigation.emit({
+                                    type: "tabPress",
+                                    target: route.key,
+                                    canPreventDefault: true,
+                                });
+                                if (!isFocused && !event.defaultPrevented) {
+                                    navigation.navigate(route.name);
+                                }
+                            };
+
+                            return (
+                                <TouchableOpacity
+                                    key={route.key}
+                                    onPress={onPress}
+                                    style={styles.tab}
+                                    accessibilityRole="button"
+                                    accessibilityState={isFocused ? { selected: true } : {}}
+                                >
+                                    <Ionicons
+                                        name={iconName}
+                                        size={26}
+                                        color={isFocused ? "#FFD700" : "#999"}
+                                    />
+                                </TouchableOpacity>
+                            );
+                        })
+                    }
                 </View>
-            )
-            }
+            }}
         />
     );
 }
