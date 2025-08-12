@@ -1,11 +1,17 @@
 import { Ionicons } from "@expo/vector-icons";
-import { Tabs } from "expo-router";
+import { Redirect, Tabs } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
+import { useSelector } from "react-redux";
 
 export default function TabsLayout() {
+    const { isAuthenticate, user } = useSelector(state => state.auth);
+
+    if (!isAuthenticate) return <Redirect href={'/(auth)'} />
+
+    if (isAuthenticate && user.role == 'admin') return <Redirect href={'/(admin)/dashboard'} />
+
     return (
-        <Tabs
-            screenOptions={{ headerShown: false }}
+        <Tabs screenOptions={{ headerShown: false }}
             tabBar={({ state, descriptors, navigation }) => (
                 < View style={styles.container}>
                     {state.routes.map((route, index) => {

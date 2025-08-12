@@ -3,14 +3,16 @@ import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { Image, ImageBackground, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import bgImage from '../../../assets/images/bg_dark.png';
+import Podium from '../../../components/Podium';
 import api from '../../../services/api';
 import { setLeaderboardList, setLeaderboardUser } from '../../../store/slices/leaderboard';
 
 
 const Leaderboard = () => {
     const router = useRouter();
+    const { user } = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const [leaderboard, setLeaderboard] = useState([]);
     const [isMonthlySelected, setIsMonthlySelected] = useState(true);
@@ -57,6 +59,14 @@ const Leaderboard = () => {
         }
         return color;
     };
+
+    const userRank =
+        leaderboard.findIndex(entry => entry.userId._id === user._id) + 1;
+
+    const percentile =
+        leaderboard.length > 0
+            ? Math.round(((leaderboard.length - userRank) / leaderboard.length) * 100)
+            : 0;
 
     useEffect(() => {
         fetchLeaderboard();
@@ -108,9 +118,26 @@ const Leaderboard = () => {
                 </View>
 
                 {/* Leaderboard List */}
-                <ScrollView className="w-full bg-black">
+                <ScrollView className="w-full bg-transparent">
+
+                    <View className='bg-[#9C6ADE] flex-row py-4 px-5 gap-3 rounded-3xl'>
+                        <View className='bg-[#520AEE] justify-center p-3 rounded-2xl'>
+                            <Text className='text-4xl font-bold text-white'>#{userRank || '--'}</Text>
+                        </View>
+                        <View className='w-[85%]'>
+                            <Text className='text-2xl font-bold text-white flex-wrap'>You are doing better than {percentile}% of other players!</Text>
+                        </View>
+                    </View>
+
+                    <Podium
+                        data={leaderboard.slice(0, 3).map(entry => ({
+                            ...entry,
+                            bgColor: colorsMap[entry._id]
+                        }))}
+                    />
+
                     <View className="flex gap-4">
-                        {leaderboard?.length > 0 && leaderboard.map((entry, index) => {
+                        {leaderboard?.length > 0 && leaderboard.slice(3).map((entry, index) => {
                             const { userId, coins } = entry;
                             const fullName = `${userId?.firstName} ${userId?.lastName}`;
                             const initials = `${userId?.firstName[0]}${userId?.lastName[0]}`;
@@ -125,7 +152,7 @@ const Leaderboard = () => {
                                     {/* Rank */}
                                     <View className="w-[10%] items-center">
                                         <Text className="py-1 px-2 border-2 rounded-full border-[#E6E6E6]">
-                                            {index + 1}
+                                            {index + 4}
                                         </Text>
                                     </View>
 
