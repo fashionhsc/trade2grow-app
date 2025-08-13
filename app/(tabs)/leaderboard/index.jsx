@@ -43,6 +43,7 @@ const Leaderboard = () => {
         }
     };
 
+
     const toggleMethod = () => setIsMonthlySelected((prev) => !prev);
 
     const handleLeaderboardPress = (data, bgColor) => {
@@ -134,7 +135,7 @@ const Leaderboard = () => {
                     />
 
                     <View className="flex gap-4">
-                        {leaderboard?.length > 0 && leaderboard.map((entry, index) => {
+                        {leaderboard?.length > 0 && leaderboard.slice(3).map((entry, index) => {
                             const { userId, coins } = entry;
                             const fullName = `${userId?.firstName} ${userId?.lastName}`;
                             const initials = `${userId?.firstName[0]}${userId?.lastName[0]}`;

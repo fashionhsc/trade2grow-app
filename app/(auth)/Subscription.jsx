@@ -57,7 +57,6 @@ const SubscriptionScreen = () => {
                 unlockStage();
 
             }).catch((error) => {
-                console.log('paymentResult error>>', error)
                 Alert.alert("Payment Failed", error.description);
             });
 
