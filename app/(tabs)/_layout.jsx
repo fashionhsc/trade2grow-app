@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { Redirect, Tabs } from "expo-router";
 import { StyleSheet, TouchableOpacity, View } from "react-native";
 import { useSelector } from "react-redux";
+import { COLORS } from "../../constants/theme";
 
 export default function TabsLayout() {
     const { isAuthenticate, user } = useSelector(state => state.auth);
@@ -49,7 +50,7 @@ export default function TabsLayout() {
                                     <Ionicons
                                         name={iconName}
                                         size={26}
-                                        color={isFocused ? "#FFD700" : "#999"}
+                                        color={isFocused ? `${COLORS.primary}` : "#999"}
                                     />
                                 </TouchableOpacity>
                             );

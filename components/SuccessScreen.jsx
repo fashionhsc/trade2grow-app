@@ -2,6 +2,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useRef } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import ConfettiCannon from "react-native-confetti-cannon";
+import { COLORS } from "../constants/theme";
 
 const SuccessScreen = ({ handleCloseSuccess }) => {
     const confettiRef = useRef(null);
@@ -31,9 +32,9 @@ const SuccessScreen = ({ handleCloseSuccess }) => {
 
             {/* Stars */}
             <View style={styles.starsContainer}>
-                <Ionicons name="star" size={28} color="#FFD700" />
-                <Ionicons name="star" size={28} color="#FFD700" />
-                <Ionicons name="star-outline" size={28} color="#FFD700" />
+                <Ionicons name="star" size={28} color={`${COLORS.primary}`} />
+                <Ionicons name="star" size={28} color={`${COLORS.primary}`} />
+                <Ionicons name="star-outline" size={28} color={`${COLORS.primary}`} />
             </View>
 
             {/* XP Earned */}
@@ -75,10 +76,10 @@ const styles = StyleSheet.create({
     },
     checkCircle: {
         marginVertical: 20,
-        backgroundColor: "#FFD700",
+        backgroundColor: COLORS.primary,
         padding: 20,
         borderRadius: 100,
-        shadowColor: "#FFD700",
+        shadowColor: COLORS.primary,
         shadowOpacity: 0.8,
         shadowRadius: 15,
         shadowOffset: { width: 0, height: 0 },
@@ -95,7 +96,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     nextStageBtn: {
-        backgroundColor: "#FFD700",
+        backgroundColor: COLORS.primary,
         paddingVertical: 14,
         paddingHorizontal: 40,
         borderRadius: 30,

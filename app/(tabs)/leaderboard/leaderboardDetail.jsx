@@ -7,6 +7,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import bgImage from '../../../assets/images/bg_dark.png';
 import { resetLeaderboardUser } from '../../../store/slices/leaderboard';
+import { COLORS } from '../../../constants/theme';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -103,7 +104,7 @@ const LeaderboardDetail = () => {
                                 const isActive = activeTab === tabValue;
                                 return (
                                     <TouchableOpacity key={tabLabel} onPress={() => setActiveTab(tabValue)} style={{ paddingHorizontal: 16, paddingVertical: 8, borderRadius: 8 }}>
-                                        <Text style={{ color: isActive ? '#FFD700' : 'white', fontWeight: '600', textAlign: 'center' }}>
+                                        <Text style={{ color: isActive ? `${COLORS.primary}` : 'white', fontWeight: '600', textAlign: 'center' }}>
                                             {tabLabel}
                                         </Text>
                                         {isActive && (
@@ -111,7 +112,7 @@ const LeaderboardDetail = () => {
                                                 style={{
                                                     width: 8,
                                                     height: 8,
-                                                    backgroundColor: '#FFD700',
+                                                    backgroundColor: `${COLORS.primary}`,
                                                     borderRadius: 4,
                                                     marginTop: 6,
                                                     alignSelf: 'center',

@@ -9,6 +9,7 @@ import bgImage from "../../assets/images/bg_coinandcandle.png";
 import SubscriptionComponent from "../../components/SubscriptionComponent";
 import SuccessScreen from "../../components/SuccessScreen";
 import api from "../../services/api";
+import { COLORS } from "../../constants/theme";
 
 
 const SubscriptionScreen = () => {
@@ -40,7 +41,7 @@ const SubscriptionScreen = () => {
                     contact: user?.phone,
                     name: `${user?.firstName} ${user?.lastName}`
                 },
-                theme: { color: '#FFD700' }
+                theme: { color: `${COLORS.primary}` }
             };
 
             RazorpayCheckout.open(options).then(async (paymentResult) => {

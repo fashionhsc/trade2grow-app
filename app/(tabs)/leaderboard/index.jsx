@@ -96,18 +96,18 @@ const Leaderboard = () => {
                 <View className="flex-row justify-between gap-4 mb-5 mt-3">
                     <TouchableOpacity
                         onPress={toggleMethod}
-                        className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${isMonthlySelected ? 'bg-yellow-400' : 'border-gray-600'}`}
+                        className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${isMonthlySelected ? 'bg-primary' : 'border-gray-600'}`}
                     >
-                        <Text className={`text-base font-semibold ${isMonthlySelected ? 'text-black' : 'text-white'}`}>
+                        <Text className={`text-base font-semibold ${isMonthlySelected ? 'text-white' : 'text-textSecondary'}`}>
                             Weekly
                         </Text>
                     </TouchableOpacity>
 
                     <TouchableOpacity
                         onPress={toggleMethod}
-                        className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${!isMonthlySelected ? 'bg-yellow-400' : 'border-gray-600'}`}
+                        className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${!isMonthlySelected ? 'bg-primary' : 'border-gray-600'}`}
                     >
-                        <Text className={`text-base font-semibold ${!isMonthlySelected ? 'text-black' : 'text-white'}`}>
+                        <Text className={`text-base font-semibold ${!isMonthlySelected ? 'text-white' : 'text-textSecondary'}`}>
                             All Time
                         </Text>
                     </TouchableOpacity>

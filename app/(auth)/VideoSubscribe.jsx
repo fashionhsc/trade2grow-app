@@ -27,7 +27,7 @@ const VideoSubscribe = () => {
 
                 {/* Quiz Card */}
                 <View className="bg-black/60 border border-[#8D60EE] rounded-xl py-10 px-10 w-full max-w-xl items-center relative">
-                    <Text className="text-2xl md:text-3xl text-[#FFD700] font-bold text-center">
+                    <Text className="text-2xl md:text-3xl text-primary font-bold text-center">
                         Interesting QUIZ Awaits You
                     </Text>
                     <Text className="text-[#ccc] text-xl md:text-lg text-center mt-2">
@@ -36,7 +36,7 @@ const VideoSubscribe = () => {
 
                     {/* Indicators */}
                     <View className="flex-row mt-4 mb-4 ">
-                        <View className="w-3 h-1 rounded-sm bg-[#FFD700] mx-1" />
+                        <View className="w-3 h-1 rounded-sm bg-primary mx-1" />
                         <View className="w-3 h-1 rounded-sm bg-[#555] mx-1" />
                         <View className="w-3 h-1 rounded-sm bg-[#555] mx-1" />
                     </View>
@@ -44,7 +44,7 @@ const VideoSubscribe = () => {
                     {/* Buttons */}
                     <View className='items-center gap-2 absolute bottom-[-60]'>
                         <TouchableOpacity
-                            className="bg-[#FFD700] rounded-full px-6 py-3 mt-2 w-11/12 md:w-3/4 flex-row items-center text-center gap-2"
+                            className="bg-primary rounded-full px-6 py-3 mt-2 w-11/12 md:w-3/4 flex-row items-center text-center gap-2"
                             onPress={() => router.push('/(auth)/Subscription')}
                         >
                             <Text className="text-black font-bold text-lg md:text-xl">

@@ -29,32 +29,32 @@ const SubscriptionComponent = ({ selectedPlan, setSelectedPlan, handlePayNow, on
                 <View className="flex-row justify-between my-5 gap-4 px-3">
                     {/* Annual */}
                     <TouchableOpacity
-                        className={`rounded-lg items-center p-4 w-[48%] ${selectedPlan === "annual" ? "border border-[#FFD700]" : "bg-black/30 border border-[#333]"}`}
+                        className={`rounded-lg items-center p-4 w-[48%] ${selectedPlan === "annual" ? "border border-primary" : "bg-black/30 border border-[#333]"}`}
                         onPress={() => setSelectedPlan("annual")}
                     >
-                        <Text className={`text-base md:text-lg font-medium ${selectedPlan === "annual" ? "text-[#FFD700]" : "text-white"}`}>
+                        <Text className={`text-base md:text-lg font-medium ${selectedPlan === "annual" ? "text-primary" : "text-white"}`}>
                             Annual
                         </Text>
-                        <Text className={`text-2xl md:text-2xl font-bold ${selectedPlan === "annual" ? "text-[#FFD700]" : "text-white"}`}>
+                        <Text className={`text-2xl md:text-2xl font-bold ${selectedPlan === "annual" ? "text-primary" : "text-white"}`}>
                             ₹4999
                         </Text>
-                        <Text className={`text-xs md:text-sm ${selectedPlan === "annual" ? "text-[#FFD700]" : "text-gray-400"}`}>
+                        <Text className={`text-xs md:text-sm ${selectedPlan === "annual" ? "text-primary" : "text-gray-400"}`}>
                             per year
                         </Text>
                     </TouchableOpacity>
 
                     {/* Monthly */}
                     <TouchableOpacity
-                        className={`rounded-lg items-center p-4 w-[48%] ${selectedPlan === "monthly" ? "border border-[#FFD700]" : "bg-black/30 border border-[#333]"}`}
+                        className={`rounded-lg items-center p-4 w-[48%] ${selectedPlan === "monthly" ? "border border-primary" : "bg-black/30 border border-[#333]"}`}
                         onPress={() => setSelectedPlan("monthly")}
                     >
-                        <Text className={`text-base md:text-lg font-medium ${selectedPlan === "monthly" ? "text-[#FFD700]" : "text-white"}`}>
+                        <Text className={`text-base md:text-lg font-medium ${selectedPlan === "monthly" ? "text-primary" : "text-white"}`}>
                             Monthly
                         </Text>
-                        <Text className={`text-2xl md:text-2xl font-bold ${selectedPlan === "monthly" ? "text-[#FFD700]" : "text-white"}`}>
+                        <Text className={`text-2xl md:text-2xl font-bold ${selectedPlan === "monthly" ? "text-primary" : "text-white"}`}>
                             ₹499
                         </Text>
-                        <Text className={`text-xs md:text-sm ${selectedPlan === "monthly" ? "text-[#FFD700]" : "text-gray-400"}`}>
+                        <Text className={`text-xs md:text-sm ${selectedPlan === "monthly" ? "text-primary" : "text-gray-400"}`}>
                             per month
                         </Text>
                     </TouchableOpacity>
@@ -65,7 +65,7 @@ const SubscriptionComponent = ({ selectedPlan, setSelectedPlan, handlePayNow, on
             {/* Buttons */}
             <View className='w-full px-3'>
                 <TouchableOpacity
-                    className="bg-[#FFD700] py-4 rounded-full items-center mb-3"
+                    className="bg-primary py-4 rounded-full items-center mb-3"
                     onPress={() => handlePayNow()}
                 >
                     <Text className="text-base md:text-lg font-bold text-black">

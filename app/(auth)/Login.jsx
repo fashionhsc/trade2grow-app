@@ -10,6 +10,7 @@ import * as Animatable from 'react-native-animatable';
 import GoogleLoginButton from '../../components/GoogleLoginButton';
 import PhoneNumberInput from '../../components/PhoneInput';
 import { regex } from '../../constants/regex';
+import { COLORS } from '../../constants/theme';
 
 const Login = () => {
     const router = useRouter();
@@ -95,16 +96,16 @@ const Login = () => {
                         {/* Mobile Option */}
                         <TouchableOpacity
                             onPress={toggleMethod}
-                            className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${isMobileSelected ? 'border-yellow-400' : 'border-gray-600'
+                            className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${isMobileSelected ? 'border-primary' : 'border-gray-600'
                                 }`}
                         >
                             {isMobileSelected ? (
-                                <AntDesign name="check" size={18} color="#FFD700" />
+                                <AntDesign name="check" size={18} color={COLORS.primary} />
                             ) : (
                                 <MaterialIcons name="call" size={18} color="white" />
                             )}
                             <Text
-                                className={`text-base font-semibold ${isMobileSelected ? 'text-yellow-400' : 'text-white'
+                                className={`text-base font-semibold ${isMobileSelected ? 'text-primary' : 'text-white'
                                     }`}
                             >
                                 Mobile
@@ -114,16 +115,16 @@ const Login = () => {
                         {/* Email Option */}
                         <TouchableOpacity
                             onPress={toggleMethod}
-                            className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${!isMobileSelected ? 'border-yellow-400' : 'border-gray-600'
+                            className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${!isMobileSelected ? 'border-primary' : 'border-gray-600'
                                 }`}
                         >
                             {!isMobileSelected ? (
-                                <AntDesign name="check" size={18} color="#FFD700" />
+                                <AntDesign name="check" size={18} color={COLORS.primary} />
                             ) : (
                                 <AntDesign name="mail" size={18} color="white" />
                             )}
                             <Text
-                                className={`text-base font-semibold ${!isMobileSelected ? 'text-yellow-400' : 'text-white'
+                                className={`text-base font-semibold ${!isMobileSelected ? 'text-primary' : 'text-white'
                                     }`}
                             >
                                 Email
@@ -152,7 +153,7 @@ const Login = () => {
                     )}
 
 
-                    <TouchableOpacity onPress={handleOtpSubmit} disabled={loading} className="bg-borderColor py-3 rounded-lg my-4">
+                    <TouchableOpacity onPress={handleOtpSubmit} disabled={loading} className="bg-primary py-3 rounded-lg my-4">
                         <Text className="text-black text-center text-base font-bold">{loading ? 'Sending...' : 'Send OTP'}</Text>
                     </TouchableOpacity>
 
@@ -166,12 +167,12 @@ const Login = () => {
                     {/* <Text className="text-white text-base font-bold mx-2 text-center">Don't have an Account</Text> */}
                     {/* <View className="flex-1 h-px bg-white" /> */}
                     {/* </View> */}
-                    {/* <TouchableOpacity className="bg-black py-3 border border-borderColor rounded-lg my-4">
-                        <Text className="text-borderColor text-center text-base font-bold">Sign up</Text>
+                    {/* <TouchableOpacity className="bg-black py-3 border border-primary rounded-lg my-4">
+                        <Text className="text-primary text-center text-base font-bold">Sign up</Text>
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/home')} className="bg-black py-3 border border-borderColor rounded-lg my-4">
-                        <Text className="text-borderColor text-center text-base font-bold">Login</Text>
+                    <TouchableOpacity onPress={() => router.push('/(tabs)/home')} className="bg-black py-3 border border-primary rounded-lg my-4">
+                        <Text className="text-primary text-center text-base font-bold">Login</Text>
                     </TouchableOpacity>
                 </Animatable.View>
             </ScrollView>

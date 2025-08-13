@@ -10,6 +10,8 @@ import Toast from 'react-native-toast-message';
 import { useDispatch, useSelector } from 'react-redux';
 import { firebaseLoginPhone, setUser } from '../../store/slices/authSlice';
 import { showSuccessToast } from '../../utils/toast';
+import { COLORS } from '../../constants/theme';
+
 
 
 const VerifyOtp = () => {
@@ -181,7 +183,7 @@ const VerifyOtp = () => {
                                 disabled={resendTime !== 0 || loading}
                                 className="bg-gray-900 py-3 mt-2 items-center rounded-lg"
                             >
-                                <Text className={`ml-2 font-semibold ${resendTime === 0 || !loading ? 'text-yellow-400' : 'text-gray-500'}`}>
+                                <Text className={`ml-2 font-semibold ${resendTime === 0 || !loading ? 'text-primary' : 'text-gray-500'}`}>
                                     I haven't received OTP {resendTime !== 0 ? `(${resendTime})s` : ''}
                                 </Text>
                             </TouchableOpacity>
@@ -190,7 +192,7 @@ const VerifyOtp = () => {
                             <TouchableOpacity
                                 onPress={handleVerify}
                                 disabled={!isButtonEnabled || loading}
-                                className={`py-3 rounded-lg mt-2 ${isButtonEnabled ? 'bg-yellow-400' : 'bg-gray-700'}`}
+                                className={`py-3 rounded-lg mt-2 ${isButtonEnabled ? 'bg-primary' : 'bg-gray-700'}`}
                             >
                                 <Text className={`text-center text-base font-bold ${isButtonEnabled ? 'text-black' : 'text-gray-400'}`}>
                                     {loading ? 'Verifing...' : 'Verify Otp'}

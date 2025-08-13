@@ -1,19 +1,10 @@
 export const COLORS = {
-    primary: '#4F46E5',        // Indigo-600
-    secondary: '#22C55E',      // Green-500
-    background: '#F9FAFB',     // Gray-50
-    text: '#1F2937',           // Gray-800
-    gray: '#6B7280',           // Gray-500
-    white: '#FFFFFF',
-    black: '#000000',
-    danger: '#EF4444',         // Red-500
-    success: '#10B981',        // Emerald-500
-    warning: '#F59E0B',        // Amber-500
+    primary: '#8D60EE',
 };
 
 export const FONT = {
     regular: 'System',
-    bold: 'System', // Use custom fonts if available
+    bold: 'System',
 };
 
 export const SPACING = {
