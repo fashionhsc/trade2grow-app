@@ -1,6 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { ScrollView, Text, View } from 'react-native';
 import { useSelector } from 'react-redux';
+import { COLORS } from '../../../constants/theme';
 
 export default function UserDetails() {
     const { user } = useSelector(state => state.auth);
@@ -30,7 +31,7 @@ export default function UserDetails() {
                         key={index}
                         className="flex-row items-center border-b border-neutral-800 p-5"
                     >
-                        <Ionicons name={item.icon} size={22} color="#FFD700" />
+                        <Ionicons name={item.icon} size={22} color={COLORS.primary} />
                         <Text className="text-neutral-400 ml-3 flex-1">{item.label}</Text>
                         <Text className="text-white font-semibold text-right flex-1">
                             {item.value}
