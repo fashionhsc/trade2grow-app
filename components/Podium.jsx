@@ -15,7 +15,7 @@ const Podium = ({ data }) => {
 
     const PodiumColumn = ({ user, rank }) => {
         const fullName = `${user?.userId?.firstName} ${user?.userId?.lastName}`;
-        const coins = new Intl.NumberFormat('en-IN').format(user?.coins) || 0;
+        const coins = new Intl.NumberFormat('en-IN').format(user?.userId?.coins) || 0;
         const initials = `${user?.userId?.firstName?.[0]}${user?.userId?.lastName?.[0]}`;
 
         const getInitialsStyle = (color) => ({

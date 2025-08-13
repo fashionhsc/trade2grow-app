@@ -16,8 +16,10 @@ const BadgeImages = {
 };
 
 const Badges = () => {
-    const { user } = useSelector(state => state.auth);
-    const userUnlockedBadgeLevel = user?.currentStage?.stageId ?? 0;
+    const { leaderboardUser } = useSelector(state => state.leaderboard);
+    const userUnlockedBadgeLevel = leaderboardUser?.userId?.currentStage?.stageId ?? 0;
+
+    console.log('leaderboardUser?.userId?.currentStage?.stageId>>>',leaderboardUser?.userId?.currentStage)
 
     const badges = Object.entries(BadgeImages).map(([id, source]) => ({
         id: Number(id),

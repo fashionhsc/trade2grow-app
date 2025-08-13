@@ -6,7 +6,10 @@ import { Dimensions, Image, ImageBackground, StatusBar, Text, TouchableOpacity, 
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import bgImage from '../../../assets/images/bg_dark.png';
+import SubscriptionComponent from '../../../components/SubscriptionComponent';
 import { COLORS } from '../../../constants/theme';
+import Badges from './badges';
+import UserDetails from './userDetails';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -126,10 +129,10 @@ const Profile = () => {
             </View>
 
             {/* Content */}
-            <View style={{ flex: 1, backgroundColor: 'black' }}>
-              {/* {activeTab === '1' && <Badges />}
-                            {activeTab === '2' && <Subscription />}
-                            {activeTab === '3' && <UserDetails />} */}
+            <View style={{ flex: 1, backgroundColor: 'black', paddingHorizontal: 5 }}>
+              {activeTab === '1' && <Badges />}
+              {activeTab === '2' && <SubscriptionComponent />}
+              {activeTab === '3' && <UserDetails />}
             </View>
           </View>
         </View>

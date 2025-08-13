@@ -15,12 +15,18 @@ export default function TabsLayout() {
         <Tabs screenOptions={{ headerShown: false }}
             tabBar={({ state, descriptors, navigation }) => {
 
+                const orderedRoutes = [...state.routes].sort((a, b) => {
+                    if (a.name.includes("profile")) return 1; // move profile to end
+                    if (b.name.includes("profile")) return -1;
+                    return 0;
+                });
+
+
                 return <View style={styles.container} >
                     {
-                        state.routes.map((route, index) => {
-                            const isFocused = state.index === index;
+                        orderedRoutes.map((route, index) => {
+                            const isFocused = state.index === state.routes.indexOf(route);
                             const baseName = route.name.split("/")[0];
-
                             const iconName = {
                                 home: "home",
                                 search: "search",

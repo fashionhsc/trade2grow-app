@@ -18,6 +18,8 @@ const Login = () => {
     const [loading, setLoading] = useState(false);
     const [email, setEmail] = useState('');
     const [emailError, setEmailError] = useState('');
+    const [phoneError, setPhoneError] = useState('');
+    const [isSubmitDisabled, setIsSubmitDisabled] = useState(true);
     const [phoneData, setPhoneData] = useState({
         countryCode: "IN",
         callingCode: "91",
@@ -29,22 +31,27 @@ const Login = () => {
     }
     const handleEmailChange = (text) => {
         setEmail(text);
-
-        const emailRegex = regex.email;
-
-        if (text.trim() === '') {
-            setEmailError('Email is required');
-        } else if (!emailRegex.test(text.trim())) {
-            setEmailError('Enter a valid email address');
-        } else {
-            setEmailError('');
-        }
     };
+
     const handleOtpSubmit = async () => {
         setLoading(true);
         try {
 
             if (email) {
+                if (!email.trim()) {
+                    setEmailError('Email is required');
+                    setIsSubmitDisabled(true);
+                    return;
+                }
+                const emailRegex = regex.email;
+                if (!emailRegex.test(email.trim())) {
+                    setEmailError('Enter a valid email address');
+                    setIsSubmitDisabled(true);
+                    return;
+                }
+                setEmailError('');
+                setIsSubmitDisabled(false);
+
                 const res = await axios.post(`${API_URL}/auth/send-otp`, { email });
                 if (res?.data?.success) {
                     router.push({
@@ -57,6 +64,20 @@ const Login = () => {
             } else {
                 if (!phoneData.phoneNumber) return;
                 const { callingCode, phoneNumber } = phoneData;
+
+                if (!phoneNumber.trim()) {
+                    setPhoneError('Phone is required');
+                    setIsSubmitDisabled(true);
+                    return;
+                }
+                if (phoneNumber.length !== 10) {
+                    setPhoneError('Enter 10 digit number');
+                    setIsSubmitDisabled(true);
+                    return;
+                }
+                setPhoneError('');
+                setIsSubmitDisabled(false);
+
                 const fullPhone = `+${callingCode}${phoneNumber}`;
                 const confirmation = await signInWithPhoneNumber(getAuth(), fullPhone);
 
@@ -134,7 +155,12 @@ const Login = () => {
 
                     {/* Conditional Input Field */}
                     {isMobileSelected ? (
-                        <PhoneNumberInput onChange={handlePhoneChange} />
+                        <>
+                            <PhoneNumberInput onChange={handlePhoneChange} />
+                            {phoneError ? (
+                                <Text className="text-red-500 text-sm mb-2">{phoneError}</Text>
+                            ) : null}
+                        </>
                     ) : (
                         <>
                             <TextInput

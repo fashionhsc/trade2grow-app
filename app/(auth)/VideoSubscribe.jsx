@@ -1,18 +1,23 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
-import { useRouter } from "expo-router";
+import { Redirect, useRouter } from "expo-router";
 import { VideoView, useVideoPlayer } from "expo-video";
 import { ImageBackground, Text, TouchableOpacity, View } from "react-native";
+import { useSelector } from 'react-redux';
 import bgImage from "../../assets/images/bg_coinandcandle.png";
 
-const videoSource =
-    'https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4';
+const videoSource = 'https://media.istockphoto.com/id/1368838867/video/stock-market-abstract-finance-background-with-motion-graph-chart-bars-and-financial.mp4?s=mp4-640x640-is&k=20&c=Fk8BMlEpC_90T5zKErH-SJiT49XgXw2Ak8vNP8py6ko=';
 
 const VideoSubscribe = () => {
+    const { user } = useSelector(state => state.auth);
     const router = useRouter();
-    const player = useVideoPlayer(videoSource, player => {
+    const player = useVideoPlayer(user?.currentStage?.videos[0]?.url || videoSource, player => {
         player.loop = true;
         player.play();
     });
+
+    if ((user?.currentStage?.videos?.[0]?.url) || user?.isPaidUser === true) {
+        return <Redirect href="/(tabs)/home" />;
+    }
 
     return (
         <ImageBackground

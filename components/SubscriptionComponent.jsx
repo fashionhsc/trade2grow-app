@@ -1,9 +1,9 @@
-import { Text, TouchableOpacity, View } from "react-native";
+import { ScrollView, Text, TouchableOpacity, View } from "react-native";
 
 const SubscriptionComponent = ({ selectedPlan, setSelectedPlan, handlePayNow, onTrial }) => {
 
     return (
-        <View className="flex-1 bg-transparent my-5 justify-between">
+        <ScrollView className="flex-1 bg-transparent my-5 py-5" contentContainerStyle={{justifyContent:'space-between'}}>
             <View className='items-center my-5'>
                 {/* Title */}
                 <View>
@@ -82,7 +82,7 @@ const SubscriptionComponent = ({ selectedPlan, setSelectedPlan, handlePayNow, on
                     </Text>
                 </TouchableOpacity>
             </View>
-        </View>
+        </ScrollView>
     );
 };
 

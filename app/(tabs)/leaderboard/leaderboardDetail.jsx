@@ -8,6 +8,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import bgImage from '../../../assets/images/bg_dark.png';
 import { resetLeaderboardUser } from '../../../store/slices/leaderboard';
 import { COLORS } from '../../../constants/theme';
+import Badges from './badges';
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('window');
 
@@ -24,6 +25,7 @@ const LeaderboardDetail = () => {
         dispatch(resetLeaderboardUser());
         router.replace('/leaderboard');
     };
+
 
     return (
         <ImageBackground
@@ -69,7 +71,7 @@ const LeaderboardDetail = () => {
                             {/* Coins */}
                             <View style={{ flex: 0.3, flexDirection: 'row', justifyContent: 'flex-end', alignItems: 'center', }}>
                                 <Image source={require('../../../assets/images/coin.png')} style={{ width: 20, height: 20, marginRight: 8 }} />
-                                <Text style={{ color: 'white', fontSize: 14 }}>{leaderboardUser?.coins ?? 0}</Text>
+                                <Text style={{ color: 'white', fontSize: 14 }}>{leaderboardUser?.userId?.coins ?? 0}</Text>
                             </View>
 
                             {/* Progress Bar */}
@@ -77,7 +79,7 @@ const LeaderboardDetail = () => {
                                 <View style={{ height: 8, backgroundColor: 'white', borderRadius: 20, overflow: 'hidden' }}>
                                     <View
                                         style={{
-                                            width: `${(leaderboardUser?.userId?.currentStage || 0) * 20}%`,
+                                            width: `${(leaderboardUser?.userId?.currentStage?.stageId || 0) * 20}%`,
                                             height: '100%',
                                             backgroundColor: '#5C01A0',
                                             borderRadius: 20,
@@ -93,7 +95,7 @@ const LeaderboardDetail = () => {
                             {/* XP */}
                             <View style={{ flex: 0.3, flexDirection: 'row', alignItems: 'center' }}>
                                 <Image source={require('../../../assets/images/xp.png')} style={{ width: 20, height: 20, marginRight: 8 }} />
-                                <Text style={{ color: 'white', fontSize: 14 }}>{leaderboardUser?.xp ?? 0}</Text>
+                                <Text style={{ color: 'white', fontSize: 14 }}>{leaderboardUser?.userId?.xp ?? 0}</Text>
                             </View>
                         </View>
 
@@ -126,7 +128,7 @@ const LeaderboardDetail = () => {
 
                         {/* Content */}
                         <View style={{ flex: 1, backgroundColor: 'black' }}>
-                            {/* {activeTab === '1' && <Badges />} */}
+                            {activeTab === '1' && <Badges />}
                         </View>
                     </View>
                 </View>

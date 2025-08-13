@@ -69,9 +69,9 @@ const VerifyOtp = () => {
                         },
                     });
                 } else if (resp?.data?.success) {
-                    showSuccessToast('Logged in successfully!');
-                    router.replace("/(tabs)/home");
+                    showSuccessToast(resp?.payload?.message || 'Logged in successfully')
                     dispatch(setUser({ user: resp?.data?.user }))
+                    router.push("/(auth)/VideoSubscribe");
                 }
             } else {
                 const credential = PhoneAuthProvider.credential(verificationId, fullOtp);
