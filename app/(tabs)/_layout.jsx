@@ -12,7 +12,7 @@ export default function TabsLayout() {
     if (isAuthenticate && user.role == 'admin') return <Redirect href={'/(admin)/dashboard'} />
 
     return (
-        <Tabs screenOptions={{ headerShown: false }}
+        <Tabs screenOptions={{ headerShown: false, unmountOnBlur: true, }}
             tabBar={({ state, descriptors, navigation }) => {
 
                 const orderedRoutes = [...state.routes].sort((a, b) => {
@@ -31,6 +31,7 @@ export default function TabsLayout() {
                                 home: "home",
                                 search: "search",
                                 leaderboard: "stats-chart",
+                                trade: "person",
                                 profile: "person",
                             }[baseName] || "ellipse";
 

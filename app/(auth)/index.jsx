@@ -6,7 +6,6 @@ import { useSelector } from "react-redux";
 
 import Login from './Login';
 
-
 const { width, height } = Dimensions.get("window");
 
 const Index = () => {

@@ -20,11 +20,7 @@ const VideoSubscribe = () => {
     }
 
     return (
-        <ImageBackground
-            source={bgImage}
-            style={{ flex: 1 }}
-            resizeMode="cover"
-        >
+        <ImageBackground source={bgImage} style={{ flex: 1 }} resizeMode="cover" >
 
             <View className="flex-1 justify-center gap-16 p-4 items-center">
                 {/* Video Section */}

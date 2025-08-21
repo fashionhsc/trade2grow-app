@@ -1,11 +1,12 @@
 import AntDesign from '@expo/vector-icons/AntDesign';
 import { useRouter } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { Image, ImageBackground, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
+import { ActivityIndicator, Image, ImageBackground, ScrollView, StatusBar, Text, TouchableOpacity, View } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import bgImage from '../../../assets/images/bg_dark.png';
 import Podium from '../../../components/Podium';
+import { COLORS } from '../../../constants/theme';
 import api from '../../../services/api';
 import { setLeaderboardList, setLeaderboardUser } from '../../../store/slices/leaderboard';
 
@@ -15,6 +16,7 @@ const Leaderboard = () => {
     const { user } = useSelector(state => state.auth);
     const dispatch = useDispatch();
     const [leaderboard, setLeaderboard] = useState([]);
+    const [isLoading, setIsLoading] = useState(false);
     const [isMonthlySelected, setIsMonthlySelected] = useState(true);
     const [colorsMap, setColorsMap] = useState({});
     const getInitialsStyle = (color) => ({
@@ -86,109 +88,117 @@ const Leaderboard = () => {
             style={{ flex: 1 }}
             resizeMode="cover"
         >
-            <SafeAreaView className="bg-transparent flex-1 px-3">
-                <StatusBar barStyle="light-content" backgroundColor="black" />
+            {isLoading ?
+                <SafeAreaView className="flex-1 justify-center items-center bg-transparent">
+                    <ActivityIndicator size="large" color={COLORS.primary} />
+                </SafeAreaView>
+                :
+                <SafeAreaView className="bg-transparent flex-1 px-3">
+                    <StatusBar barStyle="light-content" backgroundColor="black" />
 
-                <View className='flex flex-row  my-5 items-center'>
-                    <AntDesign onPress={() => router.replace('/(tabs)/home')} name="arrowleft" size={22} color="#fff" />
-                    <Text className='text-2xl text-white font-semibold m-auto'>Leaderboard</Text>
-                </View>
-
-                {/* Toggle Options */}
-                <View className="flex-row justify-between gap-4 mb-5 mt-3">
-                    <TouchableOpacity
-                        onPress={toggleMethod}
-                        className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${isMonthlySelected ? 'bg-primary' : 'border-gray-600'}`}
-                    >
-                        <Text className={`text-base font-semibold ${isMonthlySelected ? 'text-white' : 'text-textSecondary'}`}>
-                            Weekly
-                        </Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        onPress={toggleMethod}
-                        className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${!isMonthlySelected ? 'bg-primary' : 'border-gray-600'}`}
-                    >
-                        <Text className={`text-base font-semibold ${!isMonthlySelected ? 'text-white' : 'text-textSecondary'}`}>
-                            All Time
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Leaderboard List */}
-                <ScrollView className="w-full bg-transparent">
-
-                    <View className='bg-[#9C6ADE] flex-row py-4 px-5 gap-3 rounded-3xl'>
-                        <View className='bg-[#520AEE] justify-center p-3 rounded-2xl'>
-                            <Text className='text-4xl font-bold text-white'>#{userRank || '--'}</Text>
-                        </View>
-                        <View className='w-[85%]'>
-                            <Text className='text-2xl font-bold text-white flex-wrap px-2'>You are doing better than {percentile}% of other players!</Text>
-                        </View>
+                    <View className='flex flex-row  my-5 items-center'>
+                        <AntDesign onPress={() => router.replace('/(tabs)/home')} name="arrowleft" size={22} color="#fff" />
+                        <Text className='text-2xl text-white font-semibold m-auto'>Leaderboard</Text>
                     </View>
 
-                    <Podium
-                        data={leaderboard.slice(0, 3).map(entry => ({
-                            ...entry,
-                            bgColor: colorsMap[entry._id]
-                        }))}
-                    />
+                    {/* Toggle Options */}
+                    <View className="flex-row justify-between gap-4 mb-5 mt-3">
+                        <TouchableOpacity
+                            onPress={toggleMethod}
+                            className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${isMonthlySelected ? 'bg-primary' : 'border-gray-600'}`}
+                        >
+                            <Text className={`text-base font-semibold ${isMonthlySelected ? 'text-white' : 'text-textSecondary'}`}>
+                                Weekly
+                            </Text>
+                        </TouchableOpacity>
 
-                    <View className="flex gap-4">
-                        {leaderboard?.length > 0 && leaderboard.slice(3).map((entry, index) => {
-                            const { userId, coins } = entry;
-                            const fullName = `${userId?.firstName} ${userId?.lastName}`;
-                            const initials = `${userId?.firstName[0]}${userId?.lastName[0]}`;
-                            const bgColor = colorsMap[entry._id];
+                        <TouchableOpacity
+                            onPress={toggleMethod}
+                            className={`flex-1 flex-row items-center justify-center py-3 px-4 border rounded-lg gap-2 ${!isMonthlySelected ? 'bg-primary' : 'border-gray-600'}`}
+                        >
+                            <Text className={`text-base font-semibold ${!isMonthlySelected ? 'text-white' : 'text-textSecondary'}`}>
+                                All Time
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
 
-                            return (
-                                <TouchableOpacity
-                                    key={entry._id}
-                                    onPress={() => handleLeaderboardPress(entry, bgColor)}
-                                    className="bg-white flex-row p-2.5 justify-center items-center rounded-2xl"
-                                >
-                                    {/* Rank */}
-                                    <View className="w-[10%] items-center">
-                                        <Text className="py-1 px-2 border-2 rounded-full border-[#E6E6E6]">
-                                            {index + 4}
-                                        </Text>
-                                    </View>
+                    {/* Leaderboard List */}
+                    <ScrollView className="w-full bg-transparent">
 
-                                    {/* Initials */}
-                                    <View
-                                        className="mx-2.5 justify-center items-center flex-shrink-0"
-                                        style={getInitialsStyle(bgColor)}
+                        <View className='bg-[#9C6ADE] flex-row py-4 px-5 gap-3 rounded-3xl'>
+                            <View className='bg-[#520AEE] justify-center p-3 rounded-2xl'>
+                                <Text className='text-4xl font-bold text-white'>#{userRank || '--'}</Text>
+                            </View>
+                            <View className='w-[85%]'>
+                                <Text className='text-2xl font-bold text-white flex-wrap px-2'>You are doing better than {percentile}% of other players!</Text>
+                            </View>
+                        </View>
+
+                        <Podium
+                            data={leaderboard.slice(0, 3).map(entry => ({
+                                ...entry,
+                                bgColor: colorsMap[entry._id]
+                            }))}
+                        />
+
+                        <View className="flex gap-4">
+                            {leaderboard?.length > 0 && leaderboard.slice(3).map((entry, index) => {
+                                const { userId, coins } = entry;
+                                const fullName = `${userId?.firstName} ${userId?.lastName}`;
+                                const initials = `${userId?.firstName[0]}${userId?.lastName[0]}`;
+                                const bgColor = colorsMap[entry._id];
+
+                                return (
+                                    <TouchableOpacity
+                                        key={entry._id}
+                                        onPress={() => handleLeaderboardPress(entry, bgColor)}
+                                        className="bg-white flex-row p-2.5 justify-center items-center rounded-2xl"
                                     >
-                                        <Text className="font-semibold text-3xl text-black">
-                                            {initials}
-                                        </Text>
-                                    </View>
+                                        {/* Rank */}
+                                        <View className="w-[10%] items-center">
+                                            <Text className="py-1 px-2 border-2 rounded-full border-[#E6E6E6]">
+                                                {index + 4}
+                                            </Text>
+                                        </View>
+
+                                        {/* Initials */}
+                                        <View
+                                            className="mx-2.5 justify-center items-center flex-shrink-0"
+                                            style={getInitialsStyle(bgColor)}
+                                        >
+                                            <Text className="font-semibold text-3xl text-black">
+                                                {initials}
+                                            </Text>
+                                        </View>
 
 
 
-                                    {/* Full name + Points */}
-                                    <View className="w-[50%]">
-                                        <Text className="font-medium text-xl">{fullName}</Text>
-                                        <Text className="text-gray-500 text-sm">{coins} Points</Text>
-                                    </View>
+                                        {/* Full name + Points */}
+                                        <View className="w-[50%]">
+                                            <Text className="font-medium text-xl">{fullName}</Text>
+                                            <Text className="text-gray-500 text-sm">{coins} Points</Text>
+                                        </View>
 
-                                    {/* Category */}
-                                    <View className="w-[20%]">
-                                        {rankImages[index + 1] && (
-                                            <Image
-                                                source={rankImages[index + 1]}
-                                                className="w-[50px] h-[50px]"
-                                            />
-                                        )}
-                                    </View>
-                                </TouchableOpacity>
-                            );
-                        })}
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
+                                        {/* Category */}
+                                        <View className="w-[20%]">
+                                            {rankImages[index + 1] && (
+                                                <Image
+                                                    source={rankImages[index + 1]}
+                                                    className="w-[50px] h-[50px]"
+                                                />
+                                            )}
+                                        </View>
+                                    </TouchableOpacity>
+                                );
+                            })}
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            }
         </ImageBackground>
     );
 };
 
 export default Leaderboard;
+
+

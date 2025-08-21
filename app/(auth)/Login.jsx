@@ -184,7 +184,7 @@ const Login = () => {
                     </TouchableOpacity>
 
 
-                    <View className='my-4'>
+                    <View className='my-5'>
                         <GoogleLoginButton />
                     </View>
 
@@ -197,9 +197,7 @@ const Login = () => {
                         <Text className="text-primary text-center text-base font-bold">Sign up</Text>
                     </TouchableOpacity> */}
 
-                    <TouchableOpacity onPress={() => router.push('/(tabs)/home')} className="bg-black py-3 border border-primary rounded-lg my-4">
-                        <Text className="text-primary text-center text-base font-bold">Login</Text>
-                    </TouchableOpacity>
+                  
                 </Animatable.View>
             </ScrollView>
         </KeyboardAvoidingView>
